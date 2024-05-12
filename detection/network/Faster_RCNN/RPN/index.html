@@ -1,0 +1,5529 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="ffx">
+      
+      
+        <link rel="canonical" href="https://ffuxiang.gitee.io/detection/network/Faster_RCNN/RPN/">
+      
+      
+        <link rel="prev" href="../structure/">
+      
+      
+        <link rel="next" href="../ROI_Head/">
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.14">
+    
+    
+      
+        <title>RPN模块 - ffx的个人博客</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.fad675c6.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#faster_r-cnnrpn" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="ffx的个人博客" class="md-header__button md-logo" aria-label="ffx的个人博客" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ffx的个人博客
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              RPN模块
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://ffuxiang.gitee.io/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Ffuxiang
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="ffx的个人博客" class="md-nav__button md-logo" aria-label="ffx的个人博客" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    ffx的个人博客
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://ffuxiang.gitee.io/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Ffuxiang
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../resume/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    个人简历
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../fined_domain/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    细粒度/域适应笔记
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    目标检测
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            目标检测
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../detection_sum/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    目标检测汇总
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    关键概念
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            关键概念
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concept/anchor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    锚点
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concept/regression/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    回归参数
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concept/IoU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    IoU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    通用程序
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            通用程序
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3_1" id="__nav_4_3_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    数据增强
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            数据增强
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../program/data_augment/affine/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    仿射变换
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../program/data_augment/mosaic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mosaic增强
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../program/anchor_gen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    锚点生成
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../program/anchor_match/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    锚点匹配
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../program/regression/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    参数编码解码
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../program/IoU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    计算IoU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../program/train/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    训练程序
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    检测网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            检测网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_4_1" id="__nav_4_4_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Faster R-CNN
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_4_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            Faster R-CNN
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../structure/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    网络结构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    RPN模块
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    RPN模块
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      简介
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="简介">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      细节
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      代码
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="代码">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rpn" class="md-nav__link">
+    <span class="md-ellipsis">
+      RPN模块结构
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rpn_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      RPN检测头
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RPN检测头">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      合并预测结果
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      筛选边界框坐标
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="筛选边界框坐标">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nms" class="md-nav__link">
+    <span class="md-ellipsis">
+      NMS前的边界框筛选
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      修正异常边界框
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nms_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      NMS处理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rpn_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      计算RPN损失
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="计算RPN损失">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      锚点与边界框标签的匹配
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      计算损失
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="计算损失">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      筛选特定比例的正负样本
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ROI_Head/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ROI Head模块
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../RetinaNet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RetinaNet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4_3" id="__nav_4_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    YOLO系列
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            YOLO系列
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../YOLO/YOLOv3_SPP/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    YOLOv3-SPP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../YOLO/YOLOv4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    YOLOv4
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../transformer/DETR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DETR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../transformer/DeDETR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deformable DETR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    常用模块
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            常用模块
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../module/FPN/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FPN
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../module/FL/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../module/NL/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    自动驾驶
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            自动驾驶
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    论文笔记
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            论文笔记
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../auto/paper/HADAR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HADAR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../auto/paper/BEVFormer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    BEVFormer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../transformer/DeDETR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deformable DETR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../auto/PCV/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    点云可视化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../auto/PCC/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    点云与图像映射
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    视觉SLAM
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            视觉SLAM
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../auto/SLAM/SLAM_ch3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    三维空间刚体运动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    transformer系列
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            transformer系列
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../transformer/transformer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Transformer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../transformer/ViT/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ViT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../transformer/Swin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Swin Transformer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../transformer/DETR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DETR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../transformer/DeDETR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deformable DETR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../transformer/Maskformer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Maskformer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../transformer/ViT_Adapter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ViT Adapter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../transformer/DINO/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DINO
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../transformer/CLIP/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CLIP及相关改进工作
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    强化学习
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            强化学习
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../RL/DQN/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DQN算法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../RL/AC/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AC算法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../RL/PPO/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PPO算法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../RL/DDPG/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DDPG算法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../RL/landing_guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    《RL落地指南》笔记
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    图像增强
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            图像增强
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_1" id="__nav_8_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    HDR
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_1">
+            <span class="md-nav__icon md-icon"></span>
+            HDR
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../img_enhance/HDR/HDR-Transformer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HDT-Transformer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    扩散模型
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            扩散模型
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../img_enhance/DDPM/DDPM/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DDPM
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../img_enhance/DDPM/GDP/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GDP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    数据集
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            数据集
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../img_enhance/dataset/deraining/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    去雨
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../img_enhance/dataset/HDR_dataset/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HDR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    评测指标
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_4">
+            <span class="md-nav__icon md-icon"></span>
+            评测指标
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../img_enhance/matrix/PSNR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PSNR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../img_enhance/matrix/SSIM/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SSIM
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    其他论文
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            其他论文
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../other_paper/PartialConv/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    局部卷积
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../other_paper/attention/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    注意力机制
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../other_paper/Cycle_GAN/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cycle GAN
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../other_paper/saliency_sampling/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    显著性采样
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../other_paper/GradCAM/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Grad-CAM
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    PyTorch
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            PyTorch
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/sum_pytorch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PyTorch学习笔记汇总
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2" id="__nav_10_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    nn方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2">
+            <span class="md-nav__icon md-icon"></span>
+            nn方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2_1" id="__nav_10_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    网络结构
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_10_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            网络结构
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/layers/nn.Linear/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Linear
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/layers/nn.Conv2d/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Conv2d
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/layers/nn.BatchNorm2d/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.BatchNorm2d
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/layers/nn.AvgPool2d/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.AvgPool2d
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/layers/nn.AdaptiveAvgPool2d/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.AdaptiveAvgPool2d
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/layers/nn.Dropout/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Dropout
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/layers/nn.MultiheadAttention/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.MultiheadAttention
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/layers/nn.Embedding/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Embedding
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2_2" id="__nav_10_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    激活函数
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_10_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            激活函数
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/activations/nn.ReLU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.ReLU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/activations/nn.LeakyReLU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.LeakyReLU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/activations/nn.PReLU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.PReLU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/activations/nn.Sigmoid/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Sigmoid
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/activations/nn.Tanh/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Tanh
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/activations/nn.GELU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.GeLU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2_3" id="__nav_10_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    损失函数
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_10_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            损失函数
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/loss_functions/nn.L1Loss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.L1Loss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/loss_functions/nn.MSELoss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.MSELoss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/loss_functions/nn.CrossEntropyLoss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.CrossEntropyLoss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/loss_functions/nn.KLDivLoss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.KLDivLoss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/loss_functions/nn.MarginRankingLoss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.MarginRankingLoss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/loss_functions/nn.SmoothL1Loss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.SmoothL1Loss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/loss_functions/nn.TripletMarginLoss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.TripletMarginLoss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2_4" id="__nav_10_2_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    nn.functional方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_10_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            nn.functional方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/F/F.interpolate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    F.interpolate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/nn/F/F.normalize/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    F.normalize
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_3" id="__nav_10_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    utils.data方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_3">
+            <span class="md-nav__icon md-icon"></span>
+            utils.data方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/data/data.RandomSampler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    data.RandomSampler
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/data/data.WeightedRandomSampler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    data.WeightedRandomSampler
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/data/data.BatchSampler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    data.BatchSampler
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_4" id="__nav_10_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    optim方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_4">
+            <span class="md-nav__icon md-icon"></span>
+            optim方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/optim/LambdaLR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LambdaLR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_5" id="__nav_10_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    torch方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_5">
+            <span class="md-nav__icon md-icon"></span>
+            torch方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/torch/torch.cat_torch.stack/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.cat与torch.stack
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/torch/torch.chunk/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.chunk
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/torch/torch.clamp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.clamp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/torch/torch.div/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.div
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/torch/torch.ge_gt_le_lt_ne_eq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.ge_gt_le_lt_ne_eq
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/torch/torch.from_numpy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.from_numpy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/torch/torch.gather/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.gather
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/torch/torch.index_select/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.index_select
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/torch/torch.max/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.max
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/torch/torch.mul/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.mul
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/torch/torch.nonzero/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.nonzero
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/torch/torch.repeat_interleave_tensor.repeat/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.repeat_interleave与tensor.repeat
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/torch/torch.squeeze_torch.unsqueeze/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.squeeze与torch.unsqueeze
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/torch/torch.transpose_tensor.permute/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.transpose与tensor.permute
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/torch/torch.where/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.where
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_6" id="__nav_10_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    其他方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_6">
+            <span class="md-nav__icon md-icon"></span>
+            其他方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/other_method/hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    hook模块
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/other_method/train_eval/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    train与eval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/other_method/cuda/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    cuda方法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../PyTorch/question/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    常见问题
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    常用Python库
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            常用Python库
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../python/tqdm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    tqdm
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../python/rearrange/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    rearrange
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    LaTeX
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            LaTeX
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../LaTeX/symbol/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    特殊符号
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Linux
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            Linux
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_13_1" id="__nav_13_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Linux常用指令
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_13_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_1">
+            <span class="md-nav__icon md-icon"></span>
+            Linux常用指令
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../Linux/instruct/conda_pip/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    conda pip
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../Linux/instruct/bypy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    bypy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../Linux/instruct/screen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    screen命令
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../Linux/instruct/apt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    apt命令
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../Linux/instruct/PID/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    查看进程信息
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_13_2" id="__nav_13_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    报错记录
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_13_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_2">
+            <span class="md-nav__icon md-icon"></span>
+            报错记录
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../Linux/error/sum_error/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    汇总
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_13_2_2" id="__nav_13_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    系统相关
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_13_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            系统相关
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../Linux/error/linux1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Failed CC version
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_13_2_3" id="__nav_13_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    NVIDIA
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_13_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            NVIDIA
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../Linux/error/nvidia/nvidia1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NVIDIA-SMI has failed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../Linux/error/nvidia/nvidia2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NVIDIA kernel module already loaded
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    其他
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            其他
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../other/email/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    邮件模板
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../other/website/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    网站汇总
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../other/program/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    常用程序
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      简介
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="简介">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      细节
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      代码
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="代码">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rpn" class="md-nav__link">
+    <span class="md-ellipsis">
+      RPN模块结构
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rpn_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      RPN检测头
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RPN检测头">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      合并预测结果
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      筛选边界框坐标
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="筛选边界框坐标">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nms" class="md-nav__link">
+    <span class="md-ellipsis">
+      NMS前的边界框筛选
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      修正异常边界框
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nms_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      NMS处理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rpn_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      计算RPN损失
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="计算RPN损失">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      锚点与边界框标签的匹配
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      计算损失
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="计算损失">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      筛选特定比例的正负样本
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="faster_r-cnnrpn">Faster R-CNN：RPN模块<a class="headerlink" href="#faster_r-cnnrpn" title="Permanent link">&para;</a></h1>
+<h2 id="_1">简介<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>&emsp;&emsp;目的：预测出图像中目标所在的位置</p>
+<p>&emsp;&emsp;输入：特征图</p>
+<p>&emsp;&emsp;输出：物体边界框，大致将图像中的物体标注出来</p>
+<p>&emsp;&emsp;模块流程：</p>
+<p><center></p>
+<p><img alt="RPN_1" src="../img/RPN_1.jpg" /></p>
+<p></center></p>
+<p>&emsp;&emsp;损失计算过程：</p>
+<p><center></p>
+<p><img alt="RPN_2" src="../img/RPN_2.jpg" /></p>
+<p></center></p>
+<blockquote>
+<p>流程图原创，使用请告知</p>
+</blockquote>
+<h3 id="_2">细节<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p><strong>网络结构</strong></p>
+<ul>
+<li>初始默认只采用最后一层特征进行预测，锚点尺度为<span class="arithmatex"><span class="MathJax_Preview">128、256、512</span><script type="math/tex">128、256、512</script></span>，每种尺度再设置3种比例<span class="arithmatex"><span class="MathJax_Preview">\{1:2、1:1、2:1\}</span><script type="math/tex">\{1:2、1:1、2:1\}</script></span>，因此每个特征像素点会对应9个锚点；</li>
+<li>RPN中锚点预测类别只有两类，前景和背景；</li>
+<li>每个锚点对应1组回归参数，对应前景的回归参数；</li>
+<li>网络预测的前景proposals再传入NMS运算，去除冗余的边界框，NMS阈值默认0.7，最后按预测分数筛选出前2000个proposals传入ROI Head模块；</li>
+</ul>
+<p><strong>训练阶段</strong></p>
+<ul>
+<li>在锚点匹配中，与物体边界框IOU值大于0.7的锚点设置为前景锚点（正样本）、IOU值小于0.3的设置为背景锚点（负样本）；</li>
+<li>在训练RPN时，每张图随机采样256个锚点进行训练，正负样本比例默认1:1，如果正样本少于128，则用负样本填充。（这里可以用Focal loss改进）；</li>
+</ul>
+<h2 id="_3">代码<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>注：RPN模块代码来源于PyTorch官方实现的Faster R-CNN算法，总的网络模型可由如下函数指令直接调取：</p>
+<div class="highlight"><pre><span></span><code><span class="n">torchvision</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">detection</span><span class="o">.</span><span class="n">FasterRCNN</span><span class="p">()</span>
+</code></pre></div>
+<p>参考链接：</p>
+<ul>
+<li><a href="https://www.bilibili.com/video/BV1of4y1m7nj">https://www.bilibili.com/video/BV1of4y1m7nj</a></li>
+<li><a href="https://github.com/WZMIAOMIAO/deep-learning-for-image-processing">https://github.com/WZMIAOMIAO/deep-learning-for-image-processing</a></li>
+</ul>
+<h3 id="rpn">RPN模块结构<a class="headerlink" href="#rpn" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RegionProposalNetwork</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="vm">__annotations__</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;box_coder&#39;</span><span class="p">:</span> <span class="n">det_utils</span><span class="o">.</span><span class="n">BoxCoder</span><span class="p">,</span>
+        <span class="s1">&#39;proposal_matcher&#39;</span><span class="p">:</span> <span class="n">det_utils</span><span class="o">.</span><span class="n">Matcher</span><span class="p">,</span>
+        <span class="s1">&#39;fg_bg_sampler&#39;</span><span class="p">:</span> <span class="n">det_utils</span><span class="o">.</span><span class="n">BalancedPositiveNegativeSampler</span><span class="p">,</span>
+        <span class="s1">&#39;pre_nms_top_n&#39;</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="s1">&#39;post_nms_top_n&#39;</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">anchor_generator</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span>
+                 <span class="n">fg_iou_thresh</span><span class="p">,</span> <span class="n">bg_iou_thresh</span><span class="p">,</span>  <span class="c1"># fg前景目标，bg背景目标</span>
+                 <span class="n">batch_size_per_image</span><span class="p">,</span> <span class="n">positive_fraction</span><span class="p">,</span>  <span class="c1"># RPN计算损失时，使用的样本数和正样本占比</span>
+                 <span class="n">pre_nms_top_n</span><span class="p">,</span> <span class="n">post_nms_top_n</span><span class="p">,</span> <span class="n">nms_thresh</span><span class="p">,</span> <span class="n">score_thresh</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>  <span class="c1"># nms处理之前，针对每个特征层保留的目标个数，nms之后所有特征层剩余的数量，nms处理时，取定的阈值</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RegionProposalNetwork</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># 锚点生成器</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">anchor_generator</span> <span class="o">=</span> <span class="n">anchor_generator</span>
+        <span class="c1"># RPN检测头</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">head</span>
+        <span class="c1"># 定义边界框的编码-解码方法</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">box_coder</span> <span class="o">=</span> <span class="n">det_utils</span><span class="o">.</span><span class="n">BoxCoder</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+
+        <span class="c1"># use during training</span>
+        <span class="c1"># 计算anchors与真实bbox的iou(两组框之间的iou)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">box_similarity</span> <span class="o">=</span> <span class="n">box_ops</span><span class="o">.</span><span class="n">box_iou</span>
+        <span class="c1"># 判断正负样本(前后景)所用到的方法</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proposal_matcher</span> <span class="o">=</span> <span class="n">det_utils</span><span class="o">.</span><span class="n">Matcher</span><span class="p">(</span>
+            <span class="c1"># 当iou大于fg_iou_thresh(0.7)时视为正样本(前景)</span>
+            <span class="n">fg_iou_thresh</span><span class="p">,</span>
+            <span class="c1"># 当iou小于bg_iou_thresh(0.3)时视为负样本(背景)</span>
+            <span class="n">bg_iou_thresh</span><span class="p">,</span>
+            <span class="n">allow_low_quality_matches</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="c1"># 计算损失时，对正样本和负样本的采样的方法(总数多少，正样本多少比例)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fg_bg_sampler</span> <span class="o">=</span> <span class="n">det_utils</span><span class="o">.</span><span class="n">BalancedPositiveNegativeSampler</span><span class="p">(</span>
+            <span class="n">batch_size_per_image</span><span class="p">,</span> <span class="n">positive_fraction</span>  <span class="c1"># 256, 0.5</span>
+        <span class="p">)</span>
+
+        <span class="c1"># NMS处理之前，每层特征层最多保留的预测目标数量(依据预测分数筛选)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pre_nms_top_n</span> <span class="o">=</span> <span class="n">pre_nms_top_n</span>
+        <span class="c1"># NMS处理后，所有特征层最多保留的预测目标总数(同样根据预测分数筛选)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_nms_top_n</span> <span class="o">=</span> <span class="n">post_nms_top_n</span>
+        <span class="c1"># NMS处理时的阈值</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nms_thresh</span> <span class="o">=</span> <span class="n">nms_thresh</span>
+        <span class="c1"># 预测分数下限，小于该值的预测将被过滤掉，不进入后续的ROI Head模块</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">score_thresh</span> <span class="o">=</span> <span class="n">score_thresh</span>
+        <span class="c1"># 预测目标边界框的下限，如果目标边界框高宽有一个小于此值，则也被过滤掉，不进入后续的ROI Head</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span> <span class="o">=</span> <span class="mf">1.</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">images</span><span class="p">,</span>        <span class="c1"># type: ImageList</span>
+                <span class="n">features</span><span class="p">,</span>      <span class="c1"># type: Dict[str, Tensor]</span>
+                <span class="n">targets</span><span class="o">=</span><span class="kc">None</span>   <span class="c1"># type: Optional[List[Dict[str, Tensor]]]</span>
+                <span class="p">):</span>
+        <span class="c1"># type: (...) -&gt; Tuple[List[Tensor], Dict[str, Tensor]]</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Arguments:</span>
+<span class="sd">            images (ImageList): images for which we want to compute the predictions</span>
+<span class="sd">            features (Dict[Tensor]): features computed from the images that are</span>
+<span class="sd">                used for computing the predictions. Each tensor in the list</span>
+<span class="sd">                correspond to different feature levels</span>
+<span class="sd">            targets (List[Dict[Tensor]): ground-truth boxes present in the image (optional).</span>
+<span class="sd">                If provided, each element in the dict should contain a field `boxes`,</span>
+<span class="sd">                with the locations of the ground-truth boxes.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            boxes (List[Tensor]): the predicted boxes from the RPN, one Tensor per</span>
+<span class="sd">                image.</span>
+<span class="sd">            losses (Dict[Tensor]): the losses for the model during training. During</span>
+<span class="sd">                testing, it is an empty dict.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># RPN uses all feature maps that are available</span>
+        <span class="c1"># features是所有预测特征层组成的OrderedDict，如果使用fpn的话，共有5个特征层，即该字典中有五个数据</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">features</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="c1"># 预测每个预测特征层上每个像素点存在目标的概率和bboxes regression边界框回归参数</span>
+        <span class="c1"># objectness和pred_bbox_deltas都是list。objectness尺寸为(b,锚点数,h,w),pred_bbox_deltas尺寸为(b,4*锚点数,h,w)</span>
+        <span class="n">objectness</span><span class="p">,</span> <span class="n">pred_bbox_deltas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+
+        <span class="c1"># 生成一个batch图像的所有anchors信息,list(tensor)元素个数等于batch_size。</span>
+        <span class="c1"># 得到每个图片上的锚点框的坐标信息</span>
+        <span class="c1"># anchors数据类型为列表格式，列表长度为batch，列表中每个元素尺寸均为(原图上锚点数量,4)，锚点数量与参与预测的特征图宽高、ratios数量有关，这里将所有特征层上的锚点合并了</span>
+        <span class="n">anchors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">anchor_generator</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span>
+        <span class="c1"># batch_size</span>
+        <span class="n">num_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">anchors</span><span class="p">)</span>
+
+        <span class="c1"># numel() Returns the total number of elements in the input tensor.</span>
+        <span class="c1"># 计算每个预测特征层上的对应的anchors数量。特征层长*宽*锚点数</span>
+        <span class="n">num_anchors_per_level_shape_tensors</span> <span class="o">=</span> <span class="p">[</span><span class="n">o</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">objectness</span><span class="p">]</span>
+        <span class="c1"># 将num_anchors_per_level中的原诉求和，就是anchors中列表元素的第一维度</span>
+        <span class="n">num_anchors_per_level</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">num_anchors_per_level_shape_tensors</span><span class="p">]</span>
+        <span class="c1"># 调整内部tensor格式以及shape。以objectness为例：从[b,3,h,w]变为[锚点数,1]</span>
+        <span class="n">objectness</span><span class="p">,</span> <span class="n">pred_bbox_deltas</span> <span class="o">=</span> <span class="n">concat_box_prediction_layers</span><span class="p">(</span><span class="n">objectness</span><span class="p">,</span>
+                                                                    <span class="n">pred_bbox_deltas</span><span class="p">)</span>
+
+        <span class="c1"># 将预测的bbox回归参数应用到anchors上得到最终预测的边界框坐标。回归参数与锚点框结合，得到物体框，原始图像上的绝对坐标</span>
+        <span class="c1"># 注意这里切断梯度，后续ROI模块的损失不会影响到RPN边界框回归</span>
+        <span class="n">proposals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">box_coder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">pred_bbox_deltas</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">anchors</span><span class="p">)</span>
+        <span class="c1"># 调整数据形状，在最后一个维度表示坐标信息</span>
+        <span class="n">proposals</span> <span class="o">=</span> <span class="n">proposals</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_images</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="c1"># 此时proposals已经代表物体框了</span>
+        <span class="c1"># 筛除小boxes框，nms处理，根据预测概率获取前post_nms_top_n个目标</span>
+        <span class="c1"># 这里选取两千个只是为了送给后面的roi用于进一步预测类别和校正目标框</span>
+        <span class="c1"># 而RPN计算损失时是传入所有的点计算(当然计算损失时还会再筛选正负样本，在compute_loss方法中筛选)</span>
+        <span class="n">boxes</span><span class="p">,</span> <span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_proposals</span><span class="p">(</span><span class="n">proposals</span><span class="p">,</span> <span class="n">objectness</span><span class="p">,</span> <span class="n">images</span><span class="o">.</span><span class="n">image_sizes</span><span class="p">,</span> <span class="n">num_anchors_per_level</span><span class="p">)</span>
+
+        <span class="n">losses</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># 如果是训练阶段的话，需要计算损失</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span><span class="p">:</span>
+            <span class="c1"># 必须有标签</span>
+            <span class="k">assert</span> <span class="n">targets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="c1"># 计算每个anchors最匹配的gt(标签框)</span>
+            <span class="c1"># labels表示每个锚点的类别标签，前景(1.0)，背景(0.0)以及丢弃的anchors(-1.0，IOU值处于中间)</span>
+            <span class="c1"># matched_gt_boxes表示靠近每个锚点的边界框坐标，背景和要丢弃的锚点均设置为第一个目标的边界框坐标，后续用不到</span>
+            <span class="c1"># 这里的边界框坐标是真实标签坐标，不是回归参数，后续还需要对每个锚点都计算一次回归参数</span>
+            <span class="c1"># 从而让锚点对应的区域与目标真实区域重合起来</span>
+            <span class="c1"># 因此RPN就是通过预测位于目标区域周围的锚点以及其回归参数来准确的预测目标区域。</span>
+            <span class="n">labels</span><span class="p">,</span> <span class="n">matched_gt_boxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_targets_to_anchors</span><span class="p">(</span><span class="n">anchors</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+            <span class="c1"># 结合anchors以及对应的gt，计算regression参数。计算锚点与匹配的gt框之间的回归参数。</span>
+            <span class="c1"># 即指定的锚点与锚点对应的gt框之间的标准回归参数，得到RPN的回归标签，用于计算损失</span>
+            <span class="c1"># 这里相当于一个逆运算，将真实坐标值转化为回归参数</span>
+            <span class="c1"># 即使同一个物体，面对不同的锚点将会得到不同的回归参数</span>
+            <span class="n">regression_targets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">box_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">matched_gt_boxes</span><span class="p">,</span> <span class="n">anchors</span><span class="p">)</span>
+            <span class="c1"># 计算RPN的分类损失和回归损失，传入:预测的目标分数，预测的坐标回归参数，目标标签(前后景标签)，回归参数标签</span>
+            <span class="n">loss_objectness</span><span class="p">,</span> <span class="n">loss_rpn_box_reg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_loss</span><span class="p">(</span>
+                <span class="n">objectness</span><span class="p">,</span> <span class="n">pred_bbox_deltas</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">regression_targets</span>
+            <span class="p">)</span>
+            <span class="n">losses</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;loss_objectness&quot;</span><span class="p">:</span> <span class="n">loss_objectness</span><span class="p">,</span>
+                <span class="s2">&quot;loss_rpn_box_reg&quot;</span><span class="p">:</span> <span class="n">loss_rpn_box_reg</span>
+            <span class="p">}</span>
+        <span class="c1"># boxes返回的是绝对坐标下的物体框，非回归参数</span>
+        <span class="k">return</span> <span class="n">boxes</span><span class="p">,</span> <span class="n">losses</span>
+</code></pre></div>
+<h3 id="rpn_1">RPN检测头<a class="headerlink" href="#rpn_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RPNHead</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    add a RPN head with classification and regression</span>
+<span class="sd">    通过滑动窗口计算预测目标概率与bbox regression边界框回归参数</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        in_channels: 输入特征图的通道数</span>
+<span class="sd">        num_anchors: 锚点数量，表示每个像素点对应多少个检测框，与size数量和ratios数量有关(乘积)</span>
+<span class="sd">        一般一个特征层对应一个size，因此锚点数量由检测框高宽比例ratios的数量决定</span>
+<span class="sd">        这里默认3个，比例分别为[0.5,1.0,1.5]，因此一个像素点对应三个锚点</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">,</span> <span class="n">num_anchors</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RPNHead</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># 3x3 滑动窗口</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># 这里num_anchors变量默认为3(一个特征层对应一个size，一个size对应三个ratios，因此一共三个锚点)，相当于一个检测头对一个点只检测三次</span>
+        <span class="c1"># size与感受野类似，每个特征层都对应一个感受野，而特征图上每个像素点均对应三个ratios，即每个像素点对应三个锚点检测框，</span>
+        <span class="c1"># 可以通过修改ratios来修改每个像素点对应的检测框形状(数量)</span>
+        <span class="c1"># 计算预测的目标分数（这里的目标只是指前景或者背景），生成k个分数，这里的k表示每个特征层中size与ratios的乘积</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cls_logits</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">num_anchors</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># 计算预测的目标bbox regression参数，生成4k个参数</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bbox_pred</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">num_anchors</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># 初始化参数</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">):</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">constant_</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">bias</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># 传入预测特征层</span>
+        <span class="c1"># type: (List[Tensor]) -&gt; Tuple[List[Tensor], List[Tensor]]</span>
+        <span class="c1"># 初始化存储预测分数和边界框回归参数的变量</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">bbox_reg</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># 遍历每个预测特征层</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">feature</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="c1"># 首先经过一层卷积与relu</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv</span><span class="p">(</span><span class="n">feature</span><span class="p">))</span>
+            <span class="c1"># 之后分别经过卷积，得到预测分数和对应的边界框回归参数</span>
+            <span class="c1"># 这里的预测分数与回归参数均是像素点级别的，即特征图上每个像素点均对应一个分数和四个回归参数</span>
+            <span class="n">logits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cls_logits</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+            <span class="n">bbox_reg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bbox_pred</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+        <span class="c1"># 依次返回预测分数和边界框回归参数</span>
+        <span class="c1"># 尺寸分别为(b,k,w,h),(b,4k,w,h)，b表示batch，k表示特征图上的锚点数量，即一个像素点代表多少个锚点检测框</span>
+        <span class="k">return</span> <span class="n">logits</span><span class="p">,</span> <span class="n">bbox_reg</span>
+</code></pre></div>
+<h4 id="_4">合并预测结果<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">concat_box_prediction_layers</span><span class="p">(</span><span class="n">box_cls</span><span class="p">,</span> <span class="n">box_regression</span><span class="p">):</span>
+    <span class="c1"># type: (List[Tensor], List[Tensor]) -&gt; Tuple[Tensor, Tensor]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    对box_cla和box_regression两个list中的每个预测特征层的预测信息</span>
+<span class="sd">    的tensor排列顺序以及shape进行调整 -&gt; [N, -1, C]</span>
+<span class="sd">    Args:</span>
+<span class="sd">        box_cls: 每个预测特征层上的预测目标概率</span>
+<span class="sd">        box_regression: 每个预测特征层上的预测目标bboxes regression参数</span>
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">box_cls_flattened</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 存储预测分数</span>
+    <span class="n">box_regression_flattened</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 存储预测框</span>
+
+    <span class="c1"># 遍历每个预测特征层</span>
+    <span class="k">for</span> <span class="n">box_cls_per_level</span><span class="p">,</span> <span class="n">box_regression_per_level</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">box_cls</span><span class="p">,</span> <span class="n">box_regression</span><span class="p">):</span>
+        <span class="c1"># [batch_size, anchors_num_per_position * classes_num, height, width]</span>
+        <span class="c1"># 注意，当计算RPN中的proposal时，classes_num=1,只区分目标和背景</span>
+        <span class="n">N</span><span class="p">,</span> <span class="n">AxC</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">box_cls_per_level</span><span class="o">.</span><span class="n">shape</span>
+        <span class="c1"># # [batch_size, anchors_num_per_position * 4, height, width]</span>
+        <span class="n">Ax4</span> <span class="o">=</span> <span class="n">box_regression_per_level</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># anchors_num_per_position，这里表示每个像素点上的锚点数量，即ratios的长度，默认3</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">Ax4</span> <span class="o">//</span> <span class="mi">4</span>
+        <span class="c1"># classes_num。判断是否是前景，因此只有一个类</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="n">AxC</span> <span class="o">//</span> <span class="n">A</span>
+
+        <span class="c1"># [N, -1, C]，调换维度信息，便于后面与锚点结合，也便于过滤，这里C=1，表示是否是前景</span>
+        <span class="n">box_cls_per_level</span> <span class="o">=</span> <span class="n">permute_and_flatten</span><span class="p">(</span><span class="n">box_cls_per_level</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
+        <span class="n">box_cls_flattened</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">box_cls_per_level</span><span class="p">)</span>
+
+        <span class="c1"># [N, -1, C]，和上面一样，调换维度，这里C=4，表示四个回归参数</span>
+        <span class="n">box_regression_per_level</span> <span class="o">=</span> <span class="n">permute_and_flatten</span><span class="p">(</span><span class="n">box_regression_per_level</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
+        <span class="n">box_regression_flattened</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">box_regression_per_level</span><span class="p">)</span>
+    <span class="c1"># flatten(0, -2)表示一直展平到倒数第二个维度。box_cls综合了所有的预测值，box_regression综合所有的预测框</span>
+    <span class="c1"># 相当于得到(-1, C)的数据，分类与回归损失均是这样</span>
+    <span class="n">box_cls</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">box_cls_flattened</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># start_dim, end_dim</span>
+    <span class="n">box_regression</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">box_regression_flattened</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">box_cls</span><span class="p">,</span> <span class="n">box_regression</span>
+</code></pre></div>
+<p><strong>调整数据维度</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">permute_and_flatten</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">):</span>
+    <span class="c1"># type: (Tensor, int, int, int, int, int) -&gt; Tensor</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    调整tensor顺序，并进行reshape</span>
+<span class="sd">    Args:</span>
+<span class="sd">        layer: 预测特征层上预测的目标概率或bboxes regression参数</span>
+<span class="sd">        N: batch_size</span>
+<span class="sd">        A: anchors_num_per_position</span>
+<span class="sd">        C: classes_num or 4(bbox coordinate)</span>
+<span class="sd">        H: height</span>
+<span class="sd">        W: width</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        layer: 调整tensor顺序，并reshape后的结果[N, -1, C]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># view和reshape功能是一样的，先展平所有元素在按照给定shape排列</span>
+    <span class="c1"># view函数只能用于内存中连续存储的tensor，permute等操作会使tensor在内存中变得不再连续，此时就不能再调用view函数</span>
+    <span class="c1"># reshape则不需要依赖目标tensor是否在内存中是连续的</span>
+    <span class="c1"># [batch_size, anchors_num_per_position * (C or 4), height, width]</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span>  <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
+    <span class="c1"># 调换tensor维度。调换维度信息，得到[N, H, W, -1, C]</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">C</span><span class="p">)</span>  <span class="c1"># 可以用于不连续的数据</span>
+    <span class="k">return</span> <span class="n">layer</span>
+</code></pre></div>
+<h3 id="_5">筛选边界框坐标<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>&emsp;&emsp;注意：这里筛选出两千个(默认)只是为了送给后面的roi用于进一步预测类别和校正目标框，而RPN计算损失时是传入所有的点计算(当然计算损失时还会再筛选正负样本个数及比例，在compute_loss方法中筛选)</p>
+<p>&emsp;&emsp;先从每层筛选出预测分数前pre_nms_top_n个边界框，之后再经过NMS处理，过滤掉重合率高的，之后再依据预测分数筛选，筛选出前rpn_post_nms_top_n个坐标</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">filter_proposals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposals</span><span class="p">,</span> <span class="n">objectness</span><span class="p">,</span> <span class="n">image_shapes</span><span class="p">,</span> <span class="n">num_anchors_per_level</span><span class="p">):</span>
+    <span class="c1"># type: (Tensor, Tensor, List[Tuple[int, int]], List[int]) -&gt; Tuple[List[Tensor], List[Tensor]]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    筛除小boxes框，nms处理，根据预测概率获取前post_nms_top_n个目标</span>
+<span class="sd">    Args:</span>
+<span class="sd">        proposals: 预测的bbox坐标</span>
+<span class="sd">        objectness: 预测的目标概率</span>
+<span class="sd">        image_shapes: batch中每张图片的size信息</span>
+<span class="sd">        num_anchors_per_level: 每个预测特征层上预测anchors的数目</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        final_boxes: 筛选后的坐标框</span>
+<span class="sd">        final_scores: 对应的预测分数</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># batch</span>
+    <span class="n">num_images</span> <span class="o">=</span> <span class="n">proposals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># 存储数据的设备信息</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">proposals</span><span class="o">.</span><span class="n">device</span>
+    <span class="c1"># 切断梯度，只获取数值，输入到fast r-cnn中</span>
+    <span class="n">objectness</span> <span class="o">=</span> <span class="n">objectness</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+    <span class="c1"># 调整维度，(batch,锚点总数)</span>
+    <span class="n">objectness</span> <span class="o">=</span> <span class="n">objectness</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_images</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># levels负责记录分隔不同预测特征层上的anchors索引信息。为了后续把不同特征层的预测物体框分开</span>
+    <span class="c1"># levels表示一个列表，列表长度为参与预测的特征层数量，而里面的数据长度为相应特征层上的锚点数量，数值为特征层编号，从0开始</span>
+    <span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">idx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+              <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">num_anchors_per_level</span><span class="p">)]</span>
+    <span class="c1"># 将生成的特征层编号合并，通过level来区分每个预测边界框属于哪个特征层，相当于对每个预测结果做了标记</span>
+    <span class="n">levels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">levels</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># 在第一个维度上进行复制，复制batch份</span>
+    <span class="n">levels</span> <span class="o">=</span> <span class="n">levels</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">objectness</span><span class="p">)</span>
+
+    <span class="c1"># 获取每张预测特征图上预测概率排前pre_nms_top_n的anchors索引值</span>
+    <span class="n">top_n_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_top_n_idx</span><span class="p">(</span><span class="n">objectness</span><span class="p">,</span> <span class="n">num_anchors_per_level</span><span class="p">)</span>
+    <span class="c1"># image_range表示batch索引</span>
+    <span class="n">image_range</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_images</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="c1"># 加一个维度，变成二维数组，就一列，每行表示同一批batch中不同图片的标签，用于后续的索引</span>
+    <span class="n">batch_idx</span> <span class="o">=</span> <span class="n">image_range</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># [batch_size, 1]</span>
+
+    <span class="c1"># 根据每个预测特征层预测概率排前pre_nms_top_n的anchors索引值获取相应概率信息</span>
+    <span class="c1"># 取得筛选后的预测信息</span>
+    <span class="n">objectness</span> <span class="o">=</span> <span class="n">objectness</span><span class="p">[</span><span class="n">batch_idx</span><span class="p">,</span> <span class="n">top_n_idx</span><span class="p">]</span>
+    <span class="c1"># 这里执行同样的操作，为了记录分隔符，即记录每个预测属于哪个特征层</span>
+    <span class="n">levels</span> <span class="o">=</span> <span class="n">levels</span><span class="p">[</span><span class="n">batch_idx</span><span class="p">,</span> <span class="n">top_n_idx</span><span class="p">]</span>
+    <span class="c1"># 预测概率排前pre_nms_top_n的anchors索引值获取相应bbox坐标信息</span>
+    <span class="n">proposals</span> <span class="o">=</span> <span class="n">proposals</span><span class="p">[</span><span class="n">batch_idx</span><span class="p">,</span> <span class="n">top_n_idx</span><span class="p">]</span>
+    <span class="c1"># 将预测分数经过sigmoid归一化处理</span>
+    <span class="n">objectness_prob</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">objectness</span><span class="p">)</span>
+    <span class="c1"># 用于存储经过最终筛选的边界框坐标和预测分数</span>
+    <span class="n">final_boxes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">final_scores</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># 遍历每张图像的相关预测信息，按batch遍历</span>
+    <span class="k">for</span> <span class="n">boxes</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">lvl</span><span class="p">,</span> <span class="n">img_shape</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">proposals</span><span class="p">,</span> <span class="n">objectness_prob</span><span class="p">,</span> <span class="n">levels</span><span class="p">,</span> <span class="n">image_shapes</span><span class="p">):</span>
+        <span class="c1"># 调整预测的boxes信息，将越界的坐标调整到图片边界上，将预测框限制在图片内部</span>
+        <span class="n">boxes</span> <span class="o">=</span> <span class="n">box_ops</span><span class="o">.</span><span class="n">clip_boxes_to_image</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="n">img_shape</span><span class="p">)</span>
+
+        <span class="c1"># 返回boxes满足宽，高都大于min_size的索引，删除小目标。注意第一行只获取索引，后面利用索引筛选</span>
+        <span class="n">keep</span> <span class="o">=</span> <span class="n">box_ops</span><span class="o">.</span><span class="n">remove_small_boxes</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span><span class="p">)</span>
+        <span class="c1"># 依次获取正常的边界框坐标、分数、特征层归属</span>
+        <span class="n">boxes</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">lvl</span> <span class="o">=</span> <span class="n">boxes</span><span class="p">[</span><span class="n">keep</span><span class="p">],</span> <span class="n">scores</span><span class="p">[</span><span class="n">keep</span><span class="p">],</span> <span class="n">lvl</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
+
+        <span class="c1"># 移除小概率boxes，参考下面这个链接</span>
+        <span class="c1"># https://github.com/pytorch/vision/pull/3205</span>
+        <span class="n">keep</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ge</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_thresh</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># ge: &gt;= 大于等于</span>
+        <span class="c1"># 和上面一样，根据索引获取筛选后的数据</span>
+        <span class="n">boxes</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">lvl</span> <span class="o">=</span> <span class="n">boxes</span><span class="p">[</span><span class="n">keep</span><span class="p">],</span> <span class="n">scores</span><span class="p">[</span><span class="n">keep</span><span class="p">],</span> <span class="n">lvl</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
+
+        <span class="c1"># 非极大值抑制处理——NMS处理</span>
+        <span class="n">keep</span> <span class="o">=</span> <span class="n">box_ops</span><span class="o">.</span><span class="n">batched_nms</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">lvl</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nms_thresh</span><span class="p">)</span>
+
+        <span class="c1"># 利用切片的方式，获取前post_nms_top_n个目标(或者获取所有的，NMS后坐标框数量小于post_nms_top_n的话)</span>
+        <span class="n">keep</span> <span class="o">=</span> <span class="n">keep</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_nms_top_n</span><span class="p">()]</span>  
+        <span class="n">boxes</span><span class="p">,</span> <span class="n">scores</span> <span class="o">=</span> <span class="n">boxes</span><span class="p">[</span><span class="n">keep</span><span class="p">],</span> <span class="n">scores</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
+        <span class="c1"># 储存数据</span>
+        <span class="n">final_boxes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">boxes</span><span class="p">)</span>  
+        <span class="n">final_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+    <span class="c1"># 最后返回经过筛选后的边界框以及分数</span>
+    <span class="k">return</span> <span class="n">final_boxes</span><span class="p">,</span> <span class="n">final_scores</span>
+</code></pre></div>
+<h4 id="nms">NMS前的边界框筛选<a class="headerlink" href="#nms" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">_get_top_n_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objectness</span><span class="p">,</span> <span class="n">num_anchors_per_level</span><span class="p">):</span>
+    <span class="c1"># type: (Tensor, List[int]) -&gt; Tensor</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取每张预测特征图上预测概率排前pre_nms_top_n的anchors索引值</span>
+<span class="sd">    Args:</span>
+<span class="sd">        objectness: Tensor(每张图像的预测目标概率信息 )</span>
+<span class="sd">        num_anchors_per_level: List（每个预测特征层上的预测的anchors个数）</span>
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 记录每个预测特征层上预测目标概率前pre_nms_top_n的索引信息</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># 遍历每个预测特征层上的预测目标概率信息</span>
+    <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="n">objectness</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">num_anchors_per_level</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>  <span class="c1"># 对objectness在第一维度做分割，保留batch信息</span>
+        <span class="k">if</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">_is_tracing</span><span class="p">():</span>
+            <span class="n">num_anchors</span><span class="p">,</span> <span class="n">pre_nms_top_n</span> <span class="o">=</span> <span class="n">_onnx_get_num_anchors_and_pre_nms_top_n</span><span class="p">(</span><span class="n">ob</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_nms_top_n</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 预测特征层上的预测的anchors个数</span>
+            <span class="n">num_anchors</span> <span class="o">=</span> <span class="n">ob</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  
+            <span class="c1"># 如果num_anchors小于pre_nms_top_n(参与nms前，每层最多保留的预测框数量，默认2000)的话，就取全部的num_anchors</span>
+            <span class="n">pre_nms_top_n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pre_nms_top_n</span><span class="p">(),</span> <span class="n">num_anchors</span><span class="p">)</span>  
+
+        <span class="c1"># Returns the k largest elements of the given input tensor along a given dimension</span>
+        <span class="c1"># 训练保留2000，测试保留1000。topk表示取前k个最大的值的值和索引，这里只提取出索引来</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">top_n_idx</span> <span class="o">=</span> <span class="n">ob</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">pre_nms_top_n</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  
+        <span class="c1"># 下面两步很关键，对当前层的索引做偏移，从单个层来看，当前层索引从0开始，从整体来看，当前层的索引是从前一层最后一个数的索引开始的</span>
+        <span class="c1"># offset表示偏移量，每一层的偏移。第二层预测值的索引需要加上第一层预测值的总数。(基于前面所有的)</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">top_n_idx</span> <span class="o">+</span> <span class="n">offset</span><span class="p">)</span>  
+        <span class="n">offset</span> <span class="o">+=</span> <span class="n">num_anchors</span>
+    <span class="c1"># 将筛选到的边界框做合并，之后返回，再进行NMS处理</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="_6">修正异常边界框<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h4>
+<p><strong>调整越界边界框</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">clip_boxes_to_image</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="c1"># type: (Tensor, Tuple[int, int]) -&gt; Tensor</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    输入裁剪预测的boxes信息，将越界的坐标调整到图片边界上</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        boxes (Tensor[N, 4]): 边界框坐标 (x1, y1, x2, y2)</span>
+<span class="sd">        size (Tuple[height, width]): 图片尺寸</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        clipped_boxes (Tensor[N, 4]): 调整后的坐标</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dim</span> <span class="o">=</span> <span class="n">boxes</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span>
+    <span class="c1"># 得到x坐标，尺寸为(边界框数量,2)</span>
+    <span class="n">boxes_x</span> <span class="o">=</span> <span class="n">boxes</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
+    <span class="c1"># 得到y坐标，尺寸和x尺寸相同</span>
+    <span class="n">boxes_y</span> <span class="o">=</span> <span class="n">boxes</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
+    <span class="c1"># 得到高、宽，用于限制x，y坐标</span>
+    <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">size</span>
+    <span class="k">if</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">_is_tracing</span><span class="p">():</span>
+        <span class="n">boxes_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">boxes_x</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">boxes</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">boxes</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
+        <span class="n">boxes_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">boxes_x</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">boxes</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">boxes</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
+        <span class="n">boxes_y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">boxes_y</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">boxes</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">boxes</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
+        <span class="n">boxes_y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">boxes_y</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">boxes</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">boxes</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># 一般执行这里</span>
+        <span class="c1"># 限制x坐标范围在[0,width]之间</span>
+        <span class="n">boxes_x</span> <span class="o">=</span> <span class="n">boxes_x</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">width</span><span class="p">)</span>
+        <span class="c1"># 限制y坐标范围在[0,height]之间</span>
+        <span class="n">boxes_y</span> <span class="o">=</span> <span class="n">boxes_y</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">height</span><span class="p">)</span>
+    <span class="c1"># 合并</span>
+    <span class="n">clipped_boxes</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">boxes_x</span><span class="p">,</span> <span class="n">boxes_y</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span>
+    <span class="c1"># 将数据形状变为与输入数据相同的形状</span>
+    <span class="k">return</span> <span class="n">clipped_boxes</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">boxes</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>删除过小的目标</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">remove_small_boxes</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="n">min_size</span><span class="p">):</span>
+    <span class="c1"># type: (Tensor, float) -&gt; Tensor</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    移除宽高小于指定阈值的边界框</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        boxes (Tensor[N, 4]): 边界框坐标,(x1, y1, x2, y2)</span>
+<span class="sd">        min_size (float): 最小边长的阈值</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        keep (Tensor[K]): 正常边界框的索引，即边长大于min_size的边界框</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 预测boxes的宽和高</span>
+    <span class="n">ws</span><span class="p">,</span> <span class="n">hs</span> <span class="o">=</span> <span class="n">boxes</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">boxes</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">boxes</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">boxes</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># 当满足宽，高都大于给定阈值时为True</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ge</span><span class="p">(</span><span class="n">ws</span><span class="p">,</span> <span class="n">min_size</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">ge</span><span class="p">(</span><span class="n">hs</span><span class="p">,</span> <span class="n">min_size</span><span class="p">))</span>
+    <span class="c1"># 这里搜寻非零元素的索引，即True的索引</span>
+    <span class="c1"># [0]表示获取True元素第一维度的索引列表</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">keep</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># 注意，这里只返回索引</span>
+    <span class="k">return</span> <span class="n">keep</span>
+</code></pre></div>
+<h4 id="nms_1">NMS处理<a class="headerlink" href="#nms_1" title="Permanent link">&para;</a></h4>
+<p>&emsp;&emsp;注意:这里同一个批次中可能会有由不同特征层预测的边界框，此时属于不同特征层的特征需要看成不同的类别，NMS处理时不能跨类处理，即需要对原始边界框做一个偏移，将属于不同特征层的边界框偏移到空间中不同的位置，保证特征层之间预测的边界框没有交叉。</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">batched_nms</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">idxs</span><span class="p">,</span> <span class="n">iou_threshold</span><span class="p">):</span>
+    <span class="c1"># type: (Tensor, Tensor, Tensor, float) -&gt; Tensor</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    对于一个批次batch执行NMS操作</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    boxes : Tensor[N, 4]</span>
+<span class="sd">        边界框坐标，(x1, y1, x2, y2)</span>
+<span class="sd">    scores : Tensor[N]</span>
+<span class="sd">        每个边界框的预测分数</span>
+<span class="sd">    idxs : Tensor[N]</span>
+<span class="sd">        每个边界框的类别，即特征层的序号，用于后续的偏移</span>
+<span class="sd">    iou_threshold : float</span>
+<span class="sd">        NMS处理中使用到的IOU阈值</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    keep : Tensor</span>
+<span class="sd">        经过NMS处理后的边界框索引</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">boxes</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">boxes</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="c1"># 如前面所说，为了独立在每个特征层执行NMS，需要为所有的边界框添加偏移量</span>
+    <span class="c1"># 偏移量只与特征层的序号有关，并且需要足够大，以便让所有层之间互不交叉</span>
+    <span class="c1"># 获取所有boxes中最大的坐标值，当做偏移基数</span>
+    <span class="n">max_coordinate</span> <span class="o">=</span> <span class="n">boxes</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+    <span class="c1"># 为每一个类别/每一层生成一个很大的偏移量</span>
+    <span class="c1"># 这里的to只是让生成tensor的dytpe和device与boxes保持一致</span>
+    <span class="n">offsets</span> <span class="o">=</span> <span class="n">idxs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">boxes</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_coordinate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># boxes加上对应层的偏移量后，保证不同类别/层之间boxes不会有重合的现象。</span>
+    <span class="c1"># 针对每一层的框坐标都不会有重叠。第二层坐标数值是基于第一层的数值(以max_coordinate为分割单位)</span>
+    <span class="c1"># 加上特征偏置项，此时各个层的边界框坐标将互相分离</span>
+    <span class="n">boxes_for_nms</span> <span class="o">=</span> <span class="n">boxes</span> <span class="o">+</span> <span class="n">offsets</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="c1"># 只需要执行一次nms，不需要针对所有的特征层都执行一次</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="n">nms</span><span class="p">(</span><span class="n">boxes_for_nms</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">iou_threshold</span><span class="p">)</span>  
+    <span class="c1"># 返回经过NMS过滤后的边界框索引</span>
+    <span class="k">return</span> <span class="n">keep</span>
+</code></pre></div>
+<p>NMS操作直接调用torch里面封装好的函数即可</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">nms</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">iou_threshold</span><span class="p">):</span>
+    <span class="c1"># type: (Tensor, Tensor, float) -&gt; Tensor</span>
+    <span class="c1"># 只需传入边界框坐标、分数、IOU阈值即可</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">torchvision</span><span class="o">.</span><span class="n">nms</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">iou_threshold</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="rpn_2">计算RPN损失<a class="headerlink" href="#rpn_2" title="Permanent link">&para;</a></h3>
+<h4 id="_7">锚点与边界框标签的匹配<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">assign_targets_to_anchors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">anchors</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+    <span class="c1"># type: (List[Tensor], List[Dict[str, Tensor]]) -&gt; Tuple[List[Tensor], List[Tensor]]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    anchors表示所有的预设锚点，这里匹配的是预先设定的标准模板图，所有模板都对应原图的一个区域</span>
+<span class="sd">    用于与目标相匹配，选取比较靠近目标的锚点，后续再利用回归参数将靠近目标的锚点所代表的区域修正到准确的目标区域</span>
+<span class="sd">    计算每个anchors最匹配的gt，并划分为正样本，背景以及废弃的样本</span>
+<span class="sd">    Args：</span>
+<span class="sd">        anchors: (List[Tensor])</span>
+<span class="sd">        targets: (List[Dict[Tensor])</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        labels: 标记anchors归属类别（1, 0, -1分别对应正样本，背景，废弃的锚点）</span>
+<span class="sd">                注意，在RPN中只有前景和背景，所有正样本的类别都是1，0代表背景</span>
+<span class="sd">        matched_gt_boxes：与anchors匹配的gt</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 初始化锚点类别和与锚点匹配的标签</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">matched_gt_boxes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># 按batch遍历</span>
+    <span class="k">for</span> <span class="n">anchors_per_image</span><span class="p">,</span> <span class="n">targets_per_image</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">anchors</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+        <span class="c1"># 提取标签中的矩形框坐标</span>
+        <span class="n">gt_boxes</span> <span class="o">=</span> <span class="n">targets_per_image</span><span class="p">[</span><span class="s2">&quot;boxes&quot;</span><span class="p">]</span>
+        <span class="c1"># 如果图片无目标，则类别与边界框全部归为0</span>
+        <span class="k">if</span> <span class="n">gt_boxes</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="n">anchors_per_image</span><span class="o">.</span><span class="n">device</span>
+            <span class="n">matched_gt_boxes_per_image</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">anchors_per_image</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">labels_per_image</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">anchors_per_image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 计算anchors与真实bbox的iou信息，即交集面积比例，返回图片中每个对象与每个锚点的IOU值，尺寸为[该图目标数量,预设锚点数量]</span>
+            <span class="n">match_quality_matrix</span> <span class="o">=</span> <span class="n">box_ops</span><span class="o">.</span><span class="n">box_iou</span><span class="p">(</span><span class="n">gt_boxes</span><span class="p">,</span> <span class="n">anchors_per_image</span><span class="p">)</span>
+            <span class="c1"># 计算每个anchors与gt匹配iou最大的索引（如果iou&lt;0.3索引置为-1，0.3&lt;iou&lt;0.7索引为-2）</span>
+            <span class="c1"># 预测框与标签框匹配，返回匹配信息，尺寸与上个一致[该图目标数量,预设锚点数量]</span>
+            <span class="c1"># 如果锚点为前景，则数值为匹配到的对象序号；如果为背景则数值为-1；如果该锚点被丢弃(处于阈值之间)，则数值为-2</span>
+            <span class="n">matched_idxs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">proposal_matcher</span><span class="p">(</span><span class="n">match_quality_matrix</span><span class="p">)</span>
+            <span class="c1"># 这里使用clamp设置下限0是为了方便取每个anchors对应的gt_boxes信息，用于计算边界框回归损失</span>
+            <span class="c1"># 负样本和舍弃的样本都是负值，所以为了防止越界直接置为0，默认匹配第一个box</span>
+            <span class="c1"># 因为后期不用这些样本来计算回归损失，只利用正样本计算回归损失，因此无影响</span>
+            <span class="c1"># 后面是通过labels_per_image变量来记录正样本位置的，</span>
+            <span class="c1"># matched_gt_boxes_per_image表示每个锚点所匹配到的box坐标。</span>
+            <span class="n">matched_gt_boxes_per_image</span> <span class="o">=</span> <span class="n">gt_boxes</span><span class="p">[</span><span class="n">matched_idxs</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>
+
+            <span class="c1"># 记录所有anchors匹配后的标签</span>
+            <span class="n">labels_per_image</span> <span class="o">=</span> <span class="n">matched_idxs</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+            <span class="c1"># 正锚点样本处标记为1</span>
+            <span class="n">labels_per_image</span> <span class="o">=</span> <span class="n">labels_per_image</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+            <span class="c1"># background (negative examples) 得到背景索引</span>
+            <span class="n">bg_indices</span> <span class="o">=</span> <span class="n">matched_idxs</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">proposal_matcher</span><span class="o">.</span><span class="n">BELOW_LOW_THRESHOLD</span>  <span class="c1"># -1</span>
+            <span class="c1"># 负锚点样本处标记为0</span>
+            <span class="n">labels_per_image</span><span class="p">[</span><span class="n">bg_indices</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="c1"># IOU值在两个阈值之间，要丢弃的样本</span>
+            <span class="n">inds_to_discard</span> <span class="o">=</span> <span class="n">matched_idxs</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">proposal_matcher</span><span class="o">.</span><span class="n">BETWEEN_THRESHOLDS</span>  <span class="c1"># -2</span>
+            <span class="c1"># 丢弃锚点样本设置为-1</span>
+            <span class="n">labels_per_image</span><span class="p">[</span><span class="n">inds_to_discard</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+
+        <span class="c1"># 这里的label表示每个锚点正负样本的划分</span>
+        <span class="c1"># matched_gt_boxes_per_image表示每个锚点与相匹配的目标框</span>
+        <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">labels_per_image</span><span class="p">)</span>
+        <span class="n">matched_gt_boxes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">matched_gt_boxes_per_image</span><span class="p">)</span>
+    <span class="c1"># 返回锚点标签与锚点匹配的box坐标(标签框的坐标)</span>
+    <span class="k">return</span> <span class="n">labels</span><span class="p">,</span> <span class="n">matched_gt_boxes</span>  
+</code></pre></div>
+<h4 id="_8">计算损失<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">compute_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objectness</span><span class="p">,</span> <span class="n">pred_bbox_deltas</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">regression_targets</span><span class="p">):</span>
+    <span class="c1"># type: (Tensor, Tensor, List[Tensor], List[Tensor]) -&gt; Tuple[Tensor, Tensor]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    计算RPN损失，包括类别损失（前景与背景），bbox regression边界框回归损失</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">        objectness (Tensor)：每个锚点预测的前景概率</span>
+<span class="sd">        pred_bbox_deltas (Tensor)：每个锚点预测的bbox regression</span>
+<span class="sd">        labels (List[Tensor])：每个锚点的真实的标签 1, 0, -1（batch中每一张图片的labels对应List的一个元素中）</span>
+<span class="sd">        regression_targets (List[Tensor])：真实的边界框回归损失bbox regression</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        objectness_loss (Tensor) : 类别损失</span>
+<span class="sd">        box_loss (Tensor)：边界框回归损失</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 按照给定的batch_size_per_image, positive_fraction筛选特定比例的正负样本</span>
+    <span class="c1"># 分别返回正样本和负样本的mask，保证负样本不占主导</span>
+    <span class="n">sampled_pos_inds</span><span class="p">,</span> <span class="n">sampled_neg_inds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fg_bg_sampler</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+    <span class="c1"># 将一个batch中的所有正负样本List(Tensor)分别拼接在一起，并获取相应的索引</span>
+    <span class="n">sampled_pos_inds</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">sampled_pos_inds</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">sampled_neg_inds</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">sampled_neg_inds</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># 将参与损失计算的正负样本索引拼接在一起，注意，这里拼接的是索引</span>
+    <span class="n">sampled_inds</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">sampled_pos_inds</span><span class="p">,</span> <span class="n">sampled_neg_inds</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># 将预测得到的分数展平</span>
+    <span class="n">objectness</span> <span class="o">=</span> <span class="n">objectness</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="c1"># 将同一个batch里的所有锚点标签合并</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">regression_targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">regression_targets</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># 计算边界框回归损失</span>
+    <span class="n">box_loss</span> <span class="o">=</span> <span class="n">det_utils</span><span class="o">.</span><span class="n">smooth_l1_loss</span><span class="p">(</span>
+        <span class="n">pred_bbox_deltas</span><span class="p">[</span><span class="n">sampled_pos_inds</span><span class="p">],</span>  <span class="c1"># 正样本的位置</span>
+        <span class="n">regression_targets</span><span class="p">[</span><span class="n">sampled_pos_inds</span><span class="p">],</span>  <span class="c1"># 真实gt相对于锚点的位置</span>
+        <span class="n">beta</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">9</span><span class="p">,</span>
+        <span class="n">size_average</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">sampled_inds</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span>
+
+    <span class="c1"># 计算目标预测概率损失，交叉熵损失</span>
+    <span class="n">objectness_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">binary_cross_entropy_with_logits</span><span class="p">(</span>
+        <span class="n">objectness</span><span class="p">[</span><span class="n">sampled_inds</span><span class="p">],</span> <span class="n">labels</span><span class="p">[</span><span class="n">sampled_inds</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="c1"># 依次返回RPN分类损失和边界框回归损失</span>
+    <span class="k">return</span> <span class="n">objectness_loss</span><span class="p">,</span> <span class="n">box_loss</span>
+</code></pre></div>
+<p><strong>平滑的L1损失</strong></p>
+<p>这里其实也可以直接调用<code>nn.SmoothL1Loss</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">smooth_l1_loss</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="mi">9</span><span class="p">,</span> <span class="n">size_average</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="c1"># 首先求预测值与标签值之间的L1距离</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="nb">input</span> <span class="o">-</span> <span class="n">target</span><span class="p">)</span>
+    <span class="c1"># 根据距离与beta的相对大小，返回不同的值</span>
+    <span class="n">cond</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+    <span class="c1"># 如果距离小于beta，则返回0.5 * n ** 2 / beta，否则返回n - 0.5 * beta</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">n</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">beta</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">beta</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">size_average</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">loss</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</code></pre></div>
+<h5 id="_9">筛选特定比例的正负样本<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h5>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">BalancedPositiveNegativeSampler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    计算损失时，正负样本所占的比例，确保正样本占比不会太低</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size_per_image</span><span class="p">,</span> <span class="n">positive_fraction</span><span class="p">):</span>
+        <span class="c1"># type: (int, float) -&gt; None</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Arguments:</span>
+<span class="sd">            batch_size_per_image (int): 每张图片参与计算损失的锚点数量</span>
+<span class="sd">            positive_fraction (float): 期望的正样本占比</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size_per_image</span> <span class="o">=</span> <span class="n">batch_size_per_image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">positive_fraction</span> <span class="o">=</span> <span class="n">positive_fraction</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matched_idxs</span><span class="p">):</span>
+        <span class="c1"># type: (List[Tensor]) -&gt; Tuple[List[Tensor], List[Tensor]]</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Arguments:</span>
+<span class="sd">            matched idxs: 锚点标签</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            pos_idx (list[tensor]): 被采到的正样本</span>
+<span class="sd">            neg_idx (list[tensor]): 被采到的负样本</span>
+<span class="sd">        为每个图像随机采样参与损失计算的锚点</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pos_idx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">neg_idx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># 遍历每张图像的matched_idxs</span>
+        <span class="k">for</span> <span class="n">matched_idxs_per_image</span> <span class="ow">in</span> <span class="n">matched_idxs</span><span class="p">:</span>
+            <span class="c1"># &gt;= 1的为正样本(这里正样本其实为1)</span>
+            <span class="c1"># 这里的torch.where功能和nonzero类似，返回非零元素索引</span>
+            <span class="c1"># 正样本的索引</span>
+            <span class="n">positive</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ge</span><span class="p">(</span><span class="n">matched_idxs_per_image</span><span class="p">,</span> <span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># = 0的为负样本</span>
+            <span class="c1"># 负样本的索引</span>
+            <span class="n">negative</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">matched_idxs_per_image</span><span class="p">,</span> <span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># 指定正样本的数量，总数乘以比例</span>
+            <span class="n">num_pos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size_per_image</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">positive_fraction</span><span class="p">)</span>
+            <span class="c1"># 如果正样本数量不够就直接采用所有正样本</span>
+            <span class="n">num_pos</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">positive</span><span class="o">.</span><span class="n">numel</span><span class="p">(),</span> <span class="n">num_pos</span><span class="p">)</span>
+            <span class="c1"># 指定负样本数量</span>
+            <span class="n">num_neg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size_per_image</span> <span class="o">-</span> <span class="n">num_pos</span>
+            <span class="c1"># 如果负样本数量不够就直接采用所有负样本</span>
+            <span class="n">num_neg</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">negative</span><span class="o">.</span><span class="n">numel</span><span class="p">(),</span> <span class="n">num_neg</span><span class="p">)</span>
+            <span class="c1"># .numel()表示返回元素的数目，torch.randperm表示返回一个0到n-1的随机数组，这里相当于对原正负样本进行打乱</span>
+            <span class="c1"># 随机选择指定数量的正负样本，随机排序，之后选取前num_个</span>
+            <span class="n">perm1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="n">positive</span><span class="o">.</span><span class="n">numel</span><span class="p">(),</span> <span class="n">device</span><span class="o">=</span><span class="n">positive</span><span class="o">.</span><span class="n">device</span><span class="p">)[:</span><span class="n">num_pos</span><span class="p">]</span>
+            <span class="n">perm2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="n">negative</span><span class="o">.</span><span class="n">numel</span><span class="p">(),</span> <span class="n">device</span><span class="o">=</span><span class="n">negative</span><span class="o">.</span><span class="n">device</span><span class="p">)[:</span><span class="n">num_neg</span><span class="p">]</span>
+            <span class="c1"># 被锚点的索引信息</span>
+            <span class="n">pos_idx_per_image</span> <span class="o">=</span> <span class="n">positive</span><span class="p">[</span><span class="n">perm1</span><span class="p">]</span>
+            <span class="n">neg_idx_per_image</span> <span class="o">=</span> <span class="n">negative</span><span class="p">[</span><span class="n">perm2</span><span class="p">]</span>
+
+            <span class="c1"># 为所有的锚点创建掩模图</span>
+            <span class="n">pos_idx_per_image_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span>
+                <span class="n">matched_idxs_per_image</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span>
+            <span class="p">)</span>
+            <span class="n">neg_idx_per_image_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span>
+                <span class="n">matched_idxs_per_image</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span>
+            <span class="p">)</span>
+
+            <span class="c1"># 只有在被选到的正样本处设置为1</span>
+            <span class="n">pos_idx_per_image_mask</span><span class="p">[</span><span class="n">pos_idx_per_image</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="c1"># 同上，只有在被选到的负样本处设置为1</span>
+            <span class="n">neg_idx_per_image_mask</span><span class="p">[</span><span class="n">neg_idx_per_image</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="n">pos_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos_idx_per_image_mask</span><span class="p">)</span>
+            <span class="n">neg_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neg_idx_per_image_mask</span><span class="p">)</span>
+        <span class="c1"># 返回参与损失计算的正负样本掩模图</span>
+        <span class="k">return</span> <span class="n">pos_idx</span><span class="p">,</span> <span class="n">neg_idx</span>
+</code></pre></div>
+<blockquote>
+<p>最后一次修改日期：2022年2月13日</p>
+</blockquote>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../../..", "features": [], "search": "../../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.cd18aaf1.min.js"></script>
+      
+        <script src="../../../../mathjax-config.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
+      
+        <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      
+    
+  </body>
+</html>

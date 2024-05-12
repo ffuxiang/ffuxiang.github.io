@@ -1,0 +1,5021 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="ffx">
+      
+      
+        <link rel="canonical" href="https://ffuxiang.gitee.io/RL/landing_guide/">
+      
+      
+        <link rel="prev" href="../DDPG/">
+      
+      
+        <link rel="next" href="../../img_enhance/HDR/HDR-Transformer/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.14">
+    
+    
+      
+        <title>《RL落地指南》笔记 - ffx的个人博客</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.fad675c6.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ffx的个人博客" class="md-header__button md-logo" aria-label="ffx的个人博客" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ffx的个人博客
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              《RL落地指南》笔记
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://ffuxiang.gitee.io/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Ffuxiang
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ffx的个人博客" class="md-nav__button md-logo" aria-label="ffx的个人博客" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    ffx的个人博客
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://ffuxiang.gitee.io/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Ffuxiang
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resume/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    个人简历
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../fined_domain/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    细粒度/域适应笔记
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    目标检测
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            目标检测
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/detection_sum/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    目标检测汇总
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    关键概念
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            关键概念
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/concept/anchor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    锚点
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/concept/regression/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    回归参数
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/concept/IoU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    IoU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    通用程序
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            通用程序
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3_1" id="__nav_4_3_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    数据增强
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            数据增强
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/program/data_augment/affine/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    仿射变换
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/program/data_augment/mosaic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mosaic增强
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/program/anchor_gen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    锚点生成
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/program/anchor_match/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    锚点匹配
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/program/regression/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    参数编码解码
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/program/IoU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    计算IoU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/program/train/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    训练程序
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    检测网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            检测网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4_1" id="__nav_4_4_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Faster R-CNN
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            Faster R-CNN
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/network/Faster_RCNN/structure/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    网络结构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/network/Faster_RCNN/RPN/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RPN模块
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/network/Faster_RCNN/ROI_Head/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ROI Head模块
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/network/RetinaNet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RetinaNet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4_3" id="__nav_4_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    YOLO系列
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            YOLO系列
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/network/YOLO/YOLOv3_SPP/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    YOLOv3-SPP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/network/YOLO/YOLOv4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    YOLOv4
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/DETR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DETR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/DeDETR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deformable DETR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    常用模块
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            常用模块
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/module/FPN/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FPN
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/module/FL/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/module/NL/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    自动驾驶
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            自动驾驶
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    论文笔记
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            论文笔记
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../auto/paper/HADAR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HADAR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../auto/paper/BEVFormer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    BEVFormer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/DeDETR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deformable DETR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../auto/PCV/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    点云可视化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../auto/PCC/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    点云与图像映射
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    视觉SLAM
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            视觉SLAM
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../auto/SLAM/SLAM_ch3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    三维空间刚体运动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    transformer系列
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            transformer系列
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/transformer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Transformer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/ViT/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ViT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/Swin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Swin Transformer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/DETR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DETR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/DeDETR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deformable DETR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/Maskformer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Maskformer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/ViT_Adapter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ViT Adapter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/DINO/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DINO
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/CLIP/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CLIP及相关改进工作
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    强化学习
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            强化学习
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DQN/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DQN算法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AC/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AC算法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PPO/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PPO算法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DDPG/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DDPG算法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    《RL落地指南》笔记
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    《RL落地指南》笔记
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      动作空间的设计
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="动作空间的设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      完备性
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      高效性
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      合法性
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      状态空间的设计
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="状态空间的设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      协同设计
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      设计步骤
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="设计步骤">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      任务分析
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      相关信息筛选
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      泛化性考量
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      效果验证
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      回报函数的设计
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="回报函数的设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      稀疏回报问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      辅助回报
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="辅助回报">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      子目标回报
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      塑形回报
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      内驱回报
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    图像增强
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            图像增强
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_1" id="__nav_8_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    HDR
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_1">
+            <span class="md-nav__icon md-icon"></span>
+            HDR
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../img_enhance/HDR/HDR-Transformer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HDT-Transformer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    扩散模型
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            扩散模型
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../img_enhance/DDPM/DDPM/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DDPM
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../img_enhance/DDPM/GDP/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GDP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    数据集
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            数据集
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../img_enhance/dataset/deraining/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    去雨
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../img_enhance/dataset/HDR_dataset/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HDR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    评测指标
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_4">
+            <span class="md-nav__icon md-icon"></span>
+            评测指标
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../img_enhance/matrix/PSNR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PSNR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../img_enhance/matrix/SSIM/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SSIM
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    其他论文
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            其他论文
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../other_paper/PartialConv/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    局部卷积
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../other_paper/attention/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    注意力机制
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../other_paper/Cycle_GAN/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cycle GAN
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../other_paper/saliency_sampling/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    显著性采样
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../other_paper/GradCAM/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Grad-CAM
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    PyTorch
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            PyTorch
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/sum_pytorch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PyTorch学习笔记汇总
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2" id="__nav_10_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    nn方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2">
+            <span class="md-nav__icon md-icon"></span>
+            nn方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2_1" id="__nav_10_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    网络结构
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_10_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            网络结构
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.Linear/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Linear
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.Conv2d/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Conv2d
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.BatchNorm2d/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.BatchNorm2d
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.AvgPool2d/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.AvgPool2d
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.AdaptiveAvgPool2d/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.AdaptiveAvgPool2d
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.Dropout/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Dropout
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.MultiheadAttention/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.MultiheadAttention
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.Embedding/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Embedding
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2_2" id="__nav_10_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    激活函数
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_10_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            激活函数
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/activations/nn.ReLU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.ReLU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/activations/nn.LeakyReLU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.LeakyReLU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/activations/nn.PReLU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.PReLU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/activations/nn.Sigmoid/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Sigmoid
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/activations/nn.Tanh/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Tanh
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/activations/nn.GELU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.GeLU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2_3" id="__nav_10_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    损失函数
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_10_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            损失函数
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/loss_functions/nn.L1Loss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.L1Loss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/loss_functions/nn.MSELoss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.MSELoss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/loss_functions/nn.CrossEntropyLoss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.CrossEntropyLoss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/loss_functions/nn.KLDivLoss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.KLDivLoss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/loss_functions/nn.MarginRankingLoss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.MarginRankingLoss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/loss_functions/nn.SmoothL1Loss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.SmoothL1Loss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/loss_functions/nn.TripletMarginLoss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.TripletMarginLoss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2_4" id="__nav_10_2_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    nn.functional方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_10_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            nn.functional方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/F/F.interpolate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    F.interpolate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/F/F.normalize/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    F.normalize
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_3" id="__nav_10_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    utils.data方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_3">
+            <span class="md-nav__icon md-icon"></span>
+            utils.data方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/data/data.RandomSampler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    data.RandomSampler
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/data/data.WeightedRandomSampler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    data.WeightedRandomSampler
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/data/data.BatchSampler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    data.BatchSampler
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_4" id="__nav_10_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    optim方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_4">
+            <span class="md-nav__icon md-icon"></span>
+            optim方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/optim/LambdaLR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LambdaLR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_5" id="__nav_10_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    torch方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_5">
+            <span class="md-nav__icon md-icon"></span>
+            torch方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.cat_torch.stack/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.cat与torch.stack
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.chunk/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.chunk
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.clamp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.clamp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.div/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.div
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.ge_gt_le_lt_ne_eq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.ge_gt_le_lt_ne_eq
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.from_numpy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.from_numpy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.gather/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.gather
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.index_select/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.index_select
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.max/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.max
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.mul/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.mul
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.nonzero/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.nonzero
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.repeat_interleave_tensor.repeat/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.repeat_interleave与tensor.repeat
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.squeeze_torch.unsqueeze/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.squeeze与torch.unsqueeze
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.transpose_tensor.permute/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.transpose与tensor.permute
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.where/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.where
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_6" id="__nav_10_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    其他方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_6">
+            <span class="md-nav__icon md-icon"></span>
+            其他方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/other_method/hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    hook模块
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/other_method/train_eval/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    train与eval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/other_method/cuda/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    cuda方法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/question/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    常见问题
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    常用Python库
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            常用Python库
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/tqdm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    tqdm
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/rearrange/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    rearrange
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    LaTeX
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            LaTeX
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LaTeX/symbol/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    特殊符号
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Linux
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            Linux
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_13_1" id="__nav_13_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Linux常用指令
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_13_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_1">
+            <span class="md-nav__icon md-icon"></span>
+            Linux常用指令
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/instruct/conda_pip/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    conda pip
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/instruct/bypy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    bypy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/instruct/screen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    screen命令
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/instruct/apt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    apt命令
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/instruct/PID/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    查看进程信息
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_13_2" id="__nav_13_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    报错记录
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_13_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_2">
+            <span class="md-nav__icon md-icon"></span>
+            报错记录
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/error/sum_error/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    汇总
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_13_2_2" id="__nav_13_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    系统相关
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_13_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            系统相关
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/error/linux1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Failed CC version
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_13_2_3" id="__nav_13_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    NVIDIA
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_13_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            NVIDIA
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/error/nvidia/nvidia1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NVIDIA-SMI has failed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/error/nvidia/nvidia2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NVIDIA kernel module already loaded
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    其他
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            其他
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../other/email/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    邮件模板
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../other/website/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    网站汇总
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../other/program/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    常用程序
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      动作空间的设计
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="动作空间的设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      完备性
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      高效性
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      合法性
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      状态空间的设计
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="状态空间的设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      协同设计
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      设计步骤
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="设计步骤">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      任务分析
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      相关信息筛选
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      泛化性考量
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      效果验证
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      回报函数的设计
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="回报函数的设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      稀疏回报问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      辅助回报
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="辅助回报">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      子目标回报
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      塑形回报
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      内驱回报
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="_1">读书笔记——深度强化学习落地指南<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>《深度强化学习落地指南》，魏宁，电子工业出版社</p>
+<p>知乎专栏：<a href="https://www.zhihu.com/column/c_1186982555915599872">深度强化学习落地方法论</a></p>
+</blockquote>
+<p>注：本文大部分内容基于书籍《深度强化学习落地指南》所写，用于后续个人复习。</p>
+<h2 id="_2">动作空间的设计<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>&emsp;&emsp;动作空间的类型常被分为连续动作与离散动作，在设计动作空间时要满足三个基本原则：完备性、高效性以及合法性</p>
+<h3 id="_3">完备性<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p><strong>功能完备</strong></p>
+<p>&emsp;&emsp;首先要做到功能完备，确保智能体具有完成目标任务所需要的全部能力，不能存在无法触及的“状态盲区”，尤其是在连续控制变量转为有限数量的离散动作时，必须要保证离散变量具备足够的控制精度。同时，在某些开放性任务中，由于缺乏明确的指导框架，要确保功能完备需要结合领域知识。以任务驱动型聊天机器人为例，智能体需要从一些常用问句中适时选择，引导客户完成多轮对话并收集任务所需的完整信息。比如询问：①哪个城市？②什么价位等等。由这些问句构成的动作空间可以完成绝大部分酒店的预订任务。</p>
+<p>&emsp;&emsp;对于动作空间的功能完备性，有一点需要注意，应当避免赋予智能体篡改回报函数的能力。在强化学习任务中，回报函数的设计通常都基于<strong>对环境信息的感知和加工</strong>，如果智能体的动作空间强大到足以影响感知和加工的过程，那么他就可能利用该能力学会某种投机策略，通过操纵回报函数来持续获得高回报。例如，在跑步比赛中，只有智能体不断走向终点，才能凭借“离终点越来越近”这一现象获得正向收益。在比赛这项任务中，终点属于环境，智能体不能修改终点的位置，如果此时智能体的动作可以影响到终点，那么他为了获得高额的正向收益，可以从中“取巧”，让终点走向智能体，然而这破坏了跑步比赛的游戏规则，即破坏了现实的规则，应当避免这一现象。（这一现象被称为Wireheading）</p>
+<p><strong>时效完备</strong></p>
+<p>&emsp;&emsp;对于动作空间的设计，还要为每个动作选择合理的决策周期，同样的动作在不同时间分辨率下的执行效果可能存在天壤之别，如果动作指令的响应速度过慢或者更新周期过长，都会严重影响实际的决策效果，因此在保证足够快的指令响应速度之外，我们应当在算力允许的范围内适当缩短决策周期。动作空间的决策周期应该满足完成特定任务所需的最低时间分辨率，从而保证动作空间的时效完备性，一般而言，较短的决策周期能够提升智能体的灵活性和机动性。现实中，最低的时间分辨率与理论最高的分辨率之间存在一个<strong>时效完备区间</strong>，在这个区间内灵活选择决策周期。</p>
+<h3 id="_4">高效性<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>&emsp;&emsp;动作空间的设计不仅在于保证智能体有完整的探索空间，同时也在于帮助改善智能体在环境中的探索效率，从而加速算法的收敛，并且提升算法性能，主要有两个措施：化整为零和有机组合。</p>
+<p><strong>化整为零</strong></p>
+<p>&emsp;&emsp;将连续高维的动作离散化，通过牺牲一部分控制精度换取解空间维度的大幅度压缩以及探索效率的显著提升（以精度换取效率），在离散化过程中要注意离散化的粒度要适中，粒度不能过大，否则会降低控制精度，粒度也不能过小，否则会降低探索效率，从而影响智能体的灵活性。动作空间离散化的过程也同样存在一个功能完备区，其粒度上限是原有连续动作区间或不做任何额外离散化的情形，其粒度下限则对应维持功能完备性所需的最低控制精度。</p>
+<p>&emsp;&emsp;事实上，在广义动作空间的<strong>时间维度</strong>上也存在一种特殊的离散化操作——跳帧（Frame Skipping）。过短的决策周期会显著增加Episode的长度，迫使智能体<strong>不得不向前考虑更多的步骤</strong>，即在相同的时间内会执行更多的步骤，需要制定更多的决策，这不利于智能体在长时间跨度下建立决策相关性，算法训练的难度也比较高。跳帧操作就是在时效完备区间内刻意降低决策频率，并且在相邻两次决策之间简单重复上一次的动作，从而缩短Episode的长度。换个角度来看，即使策略不需要根据中间状态做出决策，但是中间状态的变化却可能影响策略的输出，因此想要连续若干步都维持相同的输出动作本身就是一种较难学习的能力，对于时间跨度较大，并且在时序上又存在大量冗余的任务（一段时间内会做出很多重复的动作），跳帧操作可以有效地提升智能体在环境中的探索效率。</p>
+<p>&emsp;&emsp;传统的跳帧操作是按指定的步长做重复，其实还可以修改一下，采用自适应跳帧步长，即在不同状态下采取不同步数的动作重复策略，实现“只在需要时做决策”的效果。具体的实现方法是在原动作空间的基础上增加一个额外的离散集合<span class="arithmatex"><span class="MathJax_Preview">W=\{w_1,w_2,\dots,w_{|W|}\}</span><script type="math/tex">W=\{w_1,w_2,\dots,w_{|W|}\}</script></span>，用于表示所有可选择的动作重复步数，并且与常规动作共同组合成实际的策略输出<span class="arithmatex"><span class="MathJax_Preview">(\pi_{\theta_{\alpha}}(\cdot|s),\pi_{\theta_{x}}(\cdot|s))</span><script type="math/tex">(\pi_{\theta_{\alpha}}(\cdot|s),\pi_{\theta_{x}}(\cdot|s))</script></span>，其中<span class="arithmatex"><span class="MathJax_Preview">\theta_{\alpha}</span><script type="math/tex">\theta_{\alpha}</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\theta_{x}</span><script type="math/tex">\theta_{x}</script></span>分别代表负责输出常规动作和动作重复步数的两个网络参数，相当于决策网络有两个分支，一个输出动作的概率分布，另一个输出动作的重复步数。</p>
+<p><strong>有机组合</strong></p>
+<p>&emsp;&emsp;除了化整为零，设计高效动作空间的另一种方式是对基本控制手段的有机组合，将一些基础的零件运动组合成一些基本的动作，比如将腿部肌肉的运动组合成走或者跑的动作，组合动作又称为宏动作，在设计动作空间时直接将这些高级技能作为常备选项，可以有效地提升算法的收敛速度和最终性能。</p>
+<p>&emsp;&emsp;理想的动作空间应该由那些基础的、不可再分的“元动作”，以及那些十分有用但不容易掌握或者没必要掌握的宏动作共同组成。宏动作未必是“元动作”的机械组合，可以是一个函数、一套规则甚至一种算法。除了手工设计，宏动作也可以由算法自主学习得到，层级强化学习（HRL）就是专门研究这一问题的学术方向，在HRL中，通常包含高层级和低层级两种学习器，前者发现和切换宏动作，后者负责具体执行宏动作。</p>
+<p>&emsp;&emsp;从本质上看，有机组合与化整为零一样，都是通过压缩空间维度起作用的。化整为零可以被看作是一种机械的有机组合，有机组合相当于精细的化整为零，例如跳帧技巧下的重复动作就属于一种特殊的宏动作。</p>
+<h3 id="_5">合法性<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>&emsp;&emsp;在实际应用中，并不是动作空间中所有的动作在任何状态下都是有效或者合法的，智能体需要在遵守每个实际任务规则的前提下去寻找最优策略，例如在游戏中有相应的游戏规则、现实中有法律规则以及道德的约束，智能体在做决策时决不能触碰规则底线。同时，对于实际硬件的决策控制也存在一些来自物理规则的限制，例如，工业机器人每个关节都有各自的活动范围。在任何状态下选择动作都不能违背预设的规则限制。</p>
+<p><strong>非法动作屏蔽机制</strong></p>
+<p>&emsp;&emsp;常用的做法就是将特定状态下规则不允许出现或者会引发严重后果的动作直接屏蔽掉，例如在离散动作空间中可以忽略掉非法动作，并且将剩余合法动作的Q值或者策略响应重新归一化，再按照正常的方法进行采样；在连续动作空间中，则设置各个动作维度的合法取值区间，对策略输出做截断处理。</p>
+<p><strong>智能体的知情权</strong></p>
+<p>&emsp;&emsp;虽然通过强制屏蔽的手段可以确保DRL算法不会输出非法动作，但是相关规则本身是环境动态不可或缺也无法忽略的一部分，截断式的屏蔽某种动作不会让智能体学到这些规则，类似一条路中有一道隐形的墙，我们强制让智能体绕行，但是智能体并不知道为什么要绕行，由于看不到这面墙，在他的决策判断中直线行驶是最优策略。因此我们应该设计算法，让智能体主动去识别和遵守规则，使其在绝大多数情况下即使不依赖外界屏蔽也能输出合法动作，在本案例中就是让智能体知道为什么不能直行而选择绕行。</p>
+<p>补：“不能选非法动作”是客观要求，“知道不能选并且不会选”才是真正的目的</p>
+<p>&emsp;&emsp;对此，我们可以让智能体保持知情权，告诉智能体实际中的规则。实施过程中，通常可以将<strong>特殊规则以适当地方式加入状态信息中</strong>，让状态空间中的数据可以体现规则信息，并且设计特定的回报函数与之做配合，让智能体通过大量的探索<strong>建立“各种状态下选择合法动作和规避非法动作”与“对应系统动态变化”之间的相关性</strong>，从而学会在输入状态中识别规则，并且在该规则的限制下采取最优策略。</p>
+<p>&emsp;&emsp;此外，智能体无法去识别规则，还有一个原因就是“截断式地让智能体去做某种动作”这一过程<strong>不是连续的</strong>，是离散间断的，<strong>无法</strong>通过求导来反向传播做<strong>优化</strong>。对此，我们可以让这一过程连续化，可以根据实际情况在回报函数中增加针对非法动作的惩罚项，从而更直观地捕捉到非法动作与优化目标之间的负相关性。</p>
+<p>&emsp;&emsp;同时，我们还可以利用LSTM和GRU等拥有“记忆”功能的RNN结构，将同一段Episode内的历史决策和对应的回报依次输入进来，由神经网络自动发现非法动作和及时负反馈，以及它们与相应状态的联系，从而避免在接下来的决策中输出非法动作。这种方案借鉴了元强化学习的思路，后者致力于学习一类相似任务的通用知识，并在同分布内的陌生任务中通过少量环境交互即可快速适应。</p>
+<h2 id="_6">状态空间的设计<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>&emsp;&emsp;状态信息代表了智能体所感知到的环境信息以及其动态变化，状态空间设计的质量直接决定了DRL算法能否收敛、收敛速度以及最终的性能，在设计状态空间时不能过分依赖端到端的特征学习以及极致的特征工程，也就是不能忽略人工提取特征也不能过渡利用人工提取的特征</p>
+<h3 id="_7">协同设计<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>&emsp;&emsp;状态空间的设计与另外两个要素——动作空间和回报函数的设计并不是相互割裂的，在实验中三者往往需要一定的协同设计。状态空间的设计在逻辑上从属于动作空间和回报函数的设计，<strong>在宏观时间轴上可以认为先有动作空间和回报函数，后有针对性设计的状态空间</strong>。具体地来说，状态空间应该与动作空间在尺度上保持一致，并且以回报函数为核心，服务于对长期积累回报的预测和决策相关性的建立。</p>
+<p><strong>与动作空间尺度一致</strong></p>
+<p>&emsp;&emsp;智能体在环境中采取的动作会反过来影响环境的状态信息，并且<strong>状态信息应该能够准确反映这种状态变化</strong>，这就要求状态在空间和时间尺度上与该动作引起的变化保持一致，状态的变化可以及时、准确地反映动作的变化（反映一个动作是不是合理的动作，要求状态和动作的灵敏度和粒度保持一致）。假设动作空间以厘米为<strong>最小移动单位</strong>，而状态空间以米为<strong>最小感知单位</strong>，那么这种执行-反馈分辨率的错位将导致DRL算法难以收敛。</p>
+<p><strong>以回报函数为中心</strong></p>
+<p>&emsp;&emsp;每一个强化学习任务都有各自的学习目标，而该目标又完全是通过回报函数来传递的，因此状态空间的设计必须紧密围绕回报函数进行，二者往往彼此交织进行。通过<strong>刻意增强状态信息与回报函数之间的相关性</strong>，将两者之间的映射关系具体化，从而为值估计和决策生成<strong>提供充分的可辨识依据</strong>。</p>
+<h3 id="_8">设计步骤<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h4 id="_9">任务分析<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
+<p>&emsp;&emsp;先将原始任务拆解成不同的子目标，这些子目标包括想让智能体做的和不想让智能体做的，针对这些子目标逐一设计回报函数，通过回报函数来约束智能体的决策，虽然此时的回报函数可能不是最好的，但只要能保证智能体学会基本的目标技能就可以，在此基础上进入下一个环节——相关信息筛选，找出与回报函数各成分直接或间接相关的状态信息。</p>
+<h4 id="_10">相关信息筛选<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<p>&emsp;&emsp;随着DRL算法训练的进行，神经网络会逐渐学会从输入的状态信息中提炼出与长期累计回报高度关联的特征，并且进一步用于生成决策。在特定的回报函数下，某个状态信息变化得到的反馈越及时，神经网络就会越容易学会如何对其进行加工并且建立起决策相关性；反之，状态信息变化得到的反馈越滞后，决策相关性就越不容易建立，相应的学习难度也越高。根据这种反馈时间的长短，可以粗略地将状态信息分为直接相关信息和间接相关信息。</p>
+<p>&emsp;&emsp;比如对于“智能体不能撞墙”这一需求，有如下两种回报函数的设计：①撞到墙后给予一个负反馈（与墙之间的距离为0时）；②给定一个阈值，与墙之间的距离小于阈值时正反馈降低，并且随着距离的减小做持续地惩罚。第一个反馈滞后性较高，智能体只有撞到了墙才会发现“这么做不对”，反之第二个反馈灵敏度较高，靠近墙时智能体就会意识到“这么做应该不太对”，<strong>算法为了让智能体不会离墙太近，从而避免撞墙，很容易能够对路径做出正确的规划</strong>。</p>
+<p><strong>直接相关信息</strong></p>
+<p>&emsp;&emsp;直接相关信息就是指与回报函数中某个奖励或惩罚项即时联动的信息，在案例②中，与墙之间的距离为对应回报函数的直接相关信息。直接相关信息所对应的回报函数成分默认是稠密的，在实践中，为了实现某种目的，在回报函数中设置一个奖励/惩罚项，并且顺手在状态空间中相应增加一个或多个直接相关信息（例如上面案例中的“智能体与墙之间的距离”，奖励/惩罚项要与所增加的直接相关信息具有强相关性），或者顺序反过来，先增加状态信息，再设置对应的奖励/惩罚项，这是状态空间与回报函数协同设计的常见模式。</p>
+<p>注：设立直接相关信息相当于给智能体设立了一个中间期望，智能体可以通过观察中间期望来判断是否能够完成最终的目的。</p>
+<p><strong>间接相关信息</strong></p>
+<p>&emsp;&emsp;间接相关信息指的是回报函数中没有及时联动的状态信息，间接相关信息的变化需要一段时间后才会得到回报函数的反馈，具有滞后性，在案例①中，与墙之间的距离为对应回报函数的间接相关信息。间接相关信息与长期回报之间的相关性较弱，算法不容易从中发现规律，不容易得到优化。因此，我们可以通过修改回报函数，来让部分状态信息变为直接状态信息，使网络更容易得到优化。例如：对于“让智能体走向A点”这一需求，①到达A之后给一个正反馈；②智能体离A越来越近，逐步给予正反馈（可以通过分析相邻的两个状态得到），从①改为②也是一种基于相关信息筛选的正向优化。</p>
+<p>注：直接相关性与间接相关性之间的区别和<strong>连续与离散的区别很类似</strong>，直接相关信息可以<strong>连续、逐步地反映动作好坏</strong>；</p>
+<p><strong>Oracle信息</strong></p>
+<p>&emsp;&emsp;在设计状态空间时，还有一类Oracle信息值得关注，他们显式地表达了本应由DRL算法自行学习和推理的<strong>隐藏信息</strong>，从而降低了任务学习的难度，起到了加速算法收敛的作用。例如在二维平面导航任务中，充电桩位置属于环境的一部分，在环境中的位置是不发生变化的，如果告诉算法这些位置在哪里，那么更容易让算法根据充电桩的位置做路径规划。但由于他们是固定不变的，因此算法总能通过大量探索来隐式地学会并且“记住”这些位置，因此先验信息Oracle并非不可或缺，但是提供Oracle可以加速算法的收敛。一旦在状态空间中提供了Oracle信息，那么DRL算法就能够通过在原始数据或特征层面与之进行某种比较，从而更加高效地建立起状态与回报函数之间的相关性。</p>
+<p>注：在学术界通常将Oracle策略作为某任务的性能上限。</p>
+<h4 id="_11">泛化性考量<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<p>&emsp;&emsp;现实世界中，任务往往具有一定的可变因素，例如导航任务中地图的尺寸、障碍物的分布等等，我们希望所设计的算法应当具备一定的泛化能力，可以从容地应对环境的变化，这就要求所设计的状态空间在跨任务场景下尽可能保持一致，为了实现该目的，主要可以采取两个手段：状态信息的抽象化预处理和信息组织形式的统一化。</p>
+<p><strong>抽象化预处理</strong></p>
+<p>&emsp;&emsp;在机器学习领域，往往模型的输入信息越多就会越容易导致其过拟合，算法可能会在<strong>无用的特征信息</strong>与模型输出之间建立虚假的相关性，这一现象同样也适用于DRL，对于DRL算法的输入状态而言，信息越抽象，其所包含的<strong>共性成分越多、干扰成分越少</strong>，策略也就<strong>越容易在相似任务间进行迁移</strong>。</p>
+<p>&emsp;&emsp;基于领域知识和对任务逻辑的理解对原始状态信息做二次加工，并从中提炼出更加简洁、高效，并且与回报函数相关性更强的信息成分或表达式，从而使DRL算法具有更好的泛化性能。例如AlphaGo在状态空间设计中对棋盘的抽象化，使策略网络可以直接迁移到任何属性的围棋棋盘上。</p>
+<p>&emsp;&emsp;在二维平面的导航任务中，假设<span class="arithmatex"><span class="MathJax_Preview">p</span><script type="math/tex">p</script></span>表示智能体当前的位置，<span class="arithmatex"><span class="MathJax_Preview">g</span><script type="math/tex">g</script></span>表示期望智能体所到达的位置，如果以绝对坐标去表示<span class="arithmatex"><span class="MathJax_Preview">p</span><script type="math/tex">p</script></span>和<span class="arithmatex"><span class="MathJax_Preview">g</span><script type="math/tex">g</script></span>的位置，则该状态信息会诱使神经网络“记住”地图中每个位置的特征，所训练的算法在当前地图下可以实现良好的导航目的，但是不利于泛化到其他地图上去。一种比较有效的改进策略就是建立以智能体为中心的坐标系，将目标位置<span class="arithmatex"><span class="MathJax_Preview">g</span><script type="math/tex">g</script></span>改为相对于智能体的坐标<span class="arithmatex"><span class="MathJax_Preview">g-p</span><script type="math/tex">g-p</script></span>，让智能体站在地图中心去决策导航，从而使算法可以学习到智能体视角下更为通用的导航知识，并且尽可能减少对特定地图的过拟合。</p>
+<p>&emsp;&emsp;在剩余电量<span class="arithmatex"><span class="MathJax_Preview">e_{left}</span><script type="math/tex">e_{left}</script></span>与充电预警<span class="arithmatex"><span class="MathJax_Preview">E</span><script type="math/tex">E</script></span>的案例中，在回报函数<span class="arithmatex"><span class="MathJax_Preview">r=-w\cdot1[e_{left}&lt;E]</span><script type="math/tex">r=-w\cdot1[e_{left}<E]</script></span>的驱动下，DRL算法可以通过大量的探索学会根据当前剩余电量<span class="arithmatex"><span class="MathJax_Preview">e_{left}</span><script type="math/tex">e_{left}</script></span>与充电预警电量<span class="arithmatex"><span class="MathJax_Preview">E</span><script type="math/tex">E</script></span>的相对关系，适时规划充电的时机和路径，从而尽可能避免剩余电量小于预警电量的情况。然而，客户可能后续根据实际情况要求降低或提升充电预警电量<span class="arithmatex"><span class="MathJax_Preview">E</span><script type="math/tex">E</script></span>，一旦改变预警电量，在回报函数中受到惩罚的条件就变了，因此这时候所训练的算法就不适用了，需要另外再次训练DRL模型。对此，可以将绝对电量<span class="arithmatex"><span class="MathJax_Preview">e_{left}</span><script type="math/tex">e_{left}</script></span>改为相对电量<span class="arithmatex"><span class="MathJax_Preview">\frac{e_{left}}{E}</span><script type="math/tex">\frac{e_{left}}{E}</script></span>，直接反映剩余电量与充电预警电量之间的比值关系，这样即使充电电量改变也不会影响原有策略的使用。</p>
+<p>注：说白了，还是离散与连续的问题，将离散的作用优化方式为连续的优化方式。</p>
+<p>&emsp;&emsp;由于<strong>强化学习缺乏足够高效的监督信号</strong>，即使原始状态信息已经包含任务学习所需的全部信息，神经网络也难以高效地学会从中提炼出有效地特征，即<strong>容易被无关信息所干扰</strong>。状态信息的抽象化预处理降低了神经网络从原始状态信息中<strong>提取有效特征、并建立长期决策相关性</strong>的难度，不仅能够改善策略的泛化能力，同时还可以提升DRL算法的学习效率以及最终性能。</p>
+<p><strong>形式统一</strong></p>
+<p>&emsp;&emsp;当所有状态信息都已经筛选和设计完毕之后，最直接的组织方式就是将他们拼接成一个一维的向量，之后输入到网络中做决策。但是这样会带来两个问题：①容易将策略限制于特定场景下，假如充电桩数量增加或者减少，状态向量的维度和网络结构也要随之发生变化，导致原有的策略网络彻底失效；②状态的表达能力有限，由于环境中障碍物的大小、形状、数量和位置分布各异，难以通过这种方式准确表示出来。</p>
+<p>&emsp;&emsp;为了克服以上的缺点，状态空间宜采用“留白式”信息组织形式。首先充分考虑所有的可能性并且设计一套冗余的模板，使其每个位置都有<strong>固定的、独一无二的含义</strong>，然后将当前可用的状态信息填到相应的位置，空白位置则以常数填充（例如0），如此一来，就可以用统一维度的状态信息<strong>应对各种可能的状态变化</strong>。冗余模板的设计可以采用向量编码形式、空间编码形式或者两者的组合，有时为了更加便于捕捉状态信息在时序上的变化特征，还可以将一定时间跨度内的状态信息按先后顺序堆砌到一起，并形成最终的状态空间。</p>
+<p>&emsp;&emsp;强化学习任务中智能体在做决策时要同时考虑当前的状态以及动作空间，智能体解空间的维度由状态空间维度和动作空间维度共同决定，因此可以通过对状态空间进行适度离散化来达到压缩解空间的目的。以空间编码为例，常规做法就是将原始状态信息下采样，得到一组网格点，虽然会损失一定程度上的感知精度，但是只要把握好离散的粒度，不丢失关键信息，并且与动作空间保持尺度一致，所带来的收益也是会弥补损失的。</p>
+<h4 id="_12">效果验证<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<p>&emsp;&emsp;常用于状态空间验证的方式主要包括：直接验证、缺省验证以及模仿学习验证。</p>
+<p><strong>直接验证</strong></p>
+<p>&emsp;&emsp;直接分析算法的训练过程，可以通过比较中途某个节点（有风险，迭代的快不一定代表最终效果好）或者完全收敛后的性能。</p>
+<p><strong>缺省验证</strong></p>
+<p>&emsp;&emsp;实践中DRL算法的训练周期可能会很长，直接做实验来验证状态空间中每个信息的有效性不合适，成本比较大。对此，可以利用训练好的策略，通过冻结输入状态中的某个信息，比如将其固定为合理区间内的某个数值，之后观察其性能相对于基线策略的损失，性能损失越大，说明相应状态信息在生成决策的过程中作用越关键，反之说明作用越边缘化，如果性能不降反升，说明被冻住的状态信息对决策有干扰作用，有可能引入的该信息噪声过大或者发生异常。缺省验证只适用于已经成功收敛的DRL模型，其意义用于剔除状态空间中那些不起作用或者起负作用的状态信息，并为进一步优化关键状态信息和弱作用状态信息提供指导。</p>
+<p><strong>模仿学习验证</strong></p>
+<p>&emsp;&emsp;如果在训练过程中，提供一个“专家策略”，即对于智能体来说专家策略在当前状态下采取的动作是绝对正确的，并且状态空间中包含了专家决策所需要的全部信息，那么经过充分训练后模型应该能够精确模仿专家策略并且达到后者的性能，而模型输出与专家策略的差异可以作为衡量状态空间设计质量的一种参考标准。</p>
+<h2 id="_13">回报函数的设计<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<p>&emsp;&emsp;在强化学习任务中，<strong>智能体根据探索过程中来自环境的反馈信号持续改进策略</strong>，这些反馈信号被称为回报。作为任务目标的具体化和数值化，回报信号起到了人与算法沟通的桥梁作用，想要智能体实现什么样的目的，就应当有什么样的回报信号去引导他学习，回报信号由回报函数生成，因此我们需要做的就是<strong>将任务的期望和目标“翻译”成回报函数</strong>，并且由回报函数去引导强化学习算法的训练。强化学习的本质就是回报函数引导下的神经网络对输入状态信息的特征深加工，以及这些深层特征与值估计和决策相关性的建立过程。</p>
+<h3 id="_14">稀疏回报问题<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<p>&emsp;&emsp;强化学习任务的目标通常可以分为两类：一类是定性目标的达成，比如二维平面导航任务中智能体抵达终点、下棋获胜等等；另一类是定量目标的极值化，比如最大化投资收益、最小化电能损耗等等。本文将上述目标的改善统称为任务的主线事件，对应会有主线回报。主线事件所对应的样本通常被称为正样本，对应会得到正向回报，其余的则被称为负样本，对应会得到负向回报。对于许多任务来说，智能体在环境中进行随机探索就能以一定概率遇到主线事件，从而获得正向收益，但是随着任务复杂度的提升，通过随机方式去探索到主线事件的概率会变得很小，采得的样本会有严重的正负比例不均衡问题，即负样本远大于正样本，稀缺的反馈信号无法为智能体指明正确的探索方向，会导致算法收敛很慢，甚至不收敛。在强化学习中，这种因缺乏反馈信号造成学习困难的现象被称为稀疏回报问题。</p>
+<p><strong>稀疏回报问题的本质</strong></p>
+<p>&emsp;&emsp;举例来说，假设现在有一个任务，想要让左侧的智能体走到最右侧，并且智能体只能选择向左、向右或者停留原地这三个动作，走到最右侧后获得正向回报，没有其余任何反馈，如果此时左右相距很远的话，依靠等概率去探索获取正样本的难度很高，同时中间状态下反馈信号的缺失使智能体难以“发现”右移相对于左移和原地不动的优势，也就<strong>无法通过主动增加右移动作来触发更多的主线事件</strong>。</p>
+<p>注：换句话说，我们所设计的算法应当对中间状态都做好反馈，从而引导智能体去触发主线事件，这也是辅助回报的思想。</p>
+<p>&emsp;&emsp;强化学习是探索和利用的平衡过程，智能体通过探索获得关于环境和任务的局部知识，也就是少量步幅内的知识，同时利用这些知识进行更有针对性的探索。从这个角度分析，过于稀疏的环境反馈信号不利于<strong>形成局部知识并为探索方向提供指导</strong>，而盲目的探索导致正样本无法出现或者数量极少，探索和利用的严重失衡造成强化学习算法收敛困难。</p>
+<h3 id="_15">辅助回报<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<p>&emsp;&emsp;为了克服稀疏回报问题，需要在主线回报的基础上增加其他奖励项或惩罚项，使回报函数变得稠密的同时引导智能体在环境中更加高效地探索，从而加快DRL算法的收敛速度并提升算法性能，这些主线回报以外的额外回报被称为辅助回报。在实践中常用的辅助回报包括三类：子目标回报、塑形回报和内驱回报。</p>
+<h4 id="_16">子目标回报<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h4>
+<p><strong>贡献度分配</strong></p>
+<p>&emsp;&emsp;子目标回报是辅助回报的主要形式，主要策略就是将任务目标进一步分解为子目标，之后按照各自在促进主线事件实现过程中的贡献大小和作用方向分别给予恰当的奖励或惩罚，这被称为贡献度分配。在理想情况下，贡献度分配应该由DRL算法在主线回报的引导下自动完成，在上个从左往右走的案例中，理想情况下算法是可以只通过主线回报去学到向右走这一策略要比向左走和停留原地不同更有优势，但由于稀疏回报问题的存在，这一局部相关性难以建立。子目标回报设计相当于用人工代替算法去实现贡献度分配这一过程，从而克服稀疏回报问题，DRL算法利用辅助回报首先学会完成子目标，然后在此基础上就能以更大的概率探索到主线事件，最后在主线回报和辅助回报的共同引导下学会期望的技能。</p>
+<p>&emsp;&emsp;贡献度分配和子目标回报都建立在对任务逻辑的深入分析和理解之上，每个具体任务都存在各种细节，他们可能对最终目标的实现产生正向或者负向的影响。从任务目标出发反向回溯，并挖掘出构成目标达成的充分或必要条件的关键因素，以及这些因素是否还有各自的充分或必要条件，这些中间节点都可以作为子目标，并为之设计对应的辅助回报。</p>
+<p><strong>目标分解实例</strong></p>
+<p>&emsp;&emsp;总体上，子目标分为鼓励和规避两大类，分别代表“应该做什么”和“不应该做什么”，回到二维平面导航任务中，为了完成任务目标，智能体需要实现三个显而易见的子目标，即抵达终点、规避碰撞和防止电量过低，其中第一个是鼓励类子目标、后两个属于规避类子目标。</p>
+<p>&emsp;&emsp;围绕抵达终点这一子目标还可以进一步设计其他次一级的子目标。例如鼓励子目标“当前时刻位置应该比上一时刻更靠近终点”和规避类子目标“减少转弯”，前者促进智能体学会主动靠近终点，这有助于在后续探索中以更大的概率遇到主线事件和正样本；后者抓住绕路行为的典型表现——转弯多，通过惩罚转弯行为从而起到减少绕路的效果，从而达到高效地抵达终点的目标。</p>
+<p>注：即使面对一个鼓励类目标，也可以将其再细分为鼓励类和规避类子目标，核心始终围绕着父类目标而设定。</p>
+<p>&emsp;&emsp;对于避免碰撞和防止电量过低这两个规避类子目标，应该对相关状态（碰撞和低电量）进行惩罚，为了降低学习难度，以上两个子目标还可以继续分解：避免碰撞的最好方式就是与障碍物保持一定的安全距离，当智能体与最近障碍物的间距小于该距离时就施加惩罚项；同理，在当前电量下降至充电预警电量或更低时也应当基于惩罚。</p>
+<p>&emsp;&emsp;连续惩罚/奖励的效果通常要优于一次性惩罚/奖励的效果，因为连续惩罚/奖励是一种及时反馈策略，与状态信息直接相关，有利于神经网络学习对有效特征的提取，引导作用更强；而一次性的惩罚/奖励具有滞后效应，只能做到间接相关，引导作用较差。在实践中，如果规避/鼓励状态持续存在（如低电量），则每一步给予一次反馈即可；若规避/鼓励状态只在瞬间发生，以规避为例（如碰撞），则可以站在预防角度定义安全边界，并在智能体越界后开始连续惩罚，鼓励状态同理。</p>
+<p><strong>与状态空间的协同设计</strong></p>
+<p>&emsp;&emsp;状态空间与回报函数之间的设计是紧密联系的，可以从认知和实践层面区分两个概念，将任务目标分解为子目标的同时，随时思考达成每个子目标都需要哪些信息作为依据，以及哪些信息能够反映子目标达成前后的变化。</p>
+<p>&emsp;&emsp;在二维平面案例中，想要防止电量过低，就需要知道当前剩余电量是多少，为了避免碰撞，就必须知道当前位置和周围障碍物的分布情况；如果智能体转了弯，就应该体现在其朝向的变化上。他们作为与辅助回报直接或间接相关的信息，非常适合加入状态空间。事实上，每新增一项辅助回报都应该马上检查状态空间中是否已经包含了与其直接或间接相关的信息，以及该信息是否足够高效，有没有继续改进的空间，这就是回报函数与状态空间的协同设计，二者相辅相成。</p>
+<h4 id="_17">塑形回报<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h4>
+<p><strong>基于势能的塑形回报</strong></p>
+<p>​       前一小节介绍的子目标回报是针对特定任务设计的，难以在不同类型的任务之间进行推广和迁移，同时基于目标分解设计的辅助回报虽然有效，但是由于数量多、取值随意性大，在实际效果上容易偏离任务初衷而只能得到次优策略。针对这一现象，吴恩达提出了基于势能的回报塑形技术，在维持最优策略不变性的前提下加速强化学习算法收敛，具体公式可以表示为：
+<div><span class="MathJax_Preview">$$
+\overline r(s,a,s')=r(s,a,s')+\gamma \phi(s')-\phi(s)
+$$</span><script type="math/tex; mode=display">
+\overline r(s,a,s')=r(s,a,s')+\gamma \phi(s')-\phi(s)
+</script>
+</div>
+在原回报函数的基础上增加了一项特殊的辅助回报<span class="arithmatex"><span class="MathJax_Preview">\gamma \phi(s')-\phi(s)</span><script type="math/tex">\gamma \phi(s')-\phi(s)</script></span>，其中<span class="arithmatex"><span class="MathJax_Preview">\gamma</span><script type="math/tex">\gamma</script></span>为折扣因子，<span class="arithmatex"><span class="MathJax_Preview">\phi(s)</span><script type="math/tex">\phi(s)</script></span>代表某种关于状态的势能函数，用于衡量当前状态与目标之间的距离（类似状态价值函数<span class="arithmatex"><span class="MathJax_Preview">V(s)</span><script type="math/tex">V(s)</script></span>），该辅助回报形式与状态切换有关，是相邻两个状态的差值。由于<span class="arithmatex"><span class="MathJax_Preview">\phi(s)</span><script type="math/tex">\phi(s)</script></span>在任何状态下都有相应的值，原来稀疏的回报函数因为塑形回报<span class="arithmatex"><span class="MathJax_Preview">\gamma \phi(s')-\phi(s)</span><script type="math/tex">\gamma \phi(s')-\phi(s)</script></span>的存在而变得稠密，从而起到高效的引导作用。</p>
+<p>注：我们想要训练的是智能体的决策功能，而这里的回报都是环境给予的，与智能体无关，即使<span class="arithmatex"><span class="MathJax_Preview">r(s,a,s')</span><script type="math/tex">r(s,a,s')</script></span>中需要传入动作<span class="arithmatex"><span class="MathJax_Preview">a</span><script type="math/tex">a</script></span>，但这一过程对于动作<span class="arithmatex"><span class="MathJax_Preview">a</span><script type="math/tex">a</script></span>来说是间断的，因此导数在传播的时候，只会沿着动作产生的过程回传，也就是<strong>只沿着决策函数回传</strong>，回报只起到辅助的作用，只需要提供数值即可（例如在基于决策的算法中用于加权），因此这里不用担心“引入的势能函数<span class="arithmatex"><span class="MathJax_Preview">\phi(s)</span><script type="math/tex">\phi(s)</script></span>没有输入动作<span class="arithmatex"><span class="MathJax_Preview">a</span><script type="math/tex">a</script></span>而无法回传梯度”的问题，这里只改变回报的数值大小，回报并不会单独产生一个梯度回传分支。</p>
+<p>​       对于二维平面导航任务，可以选择智能体当前位置与终点之间距离的负数作为势能函<span class="arithmatex"><span class="MathJax_Preview">\phi(s)=-||p-g||</span><script type="math/tex">\phi(s)=-||p-g||</script></span>，从而使终点位置在该势能函数下成为虹吸状态，之后再将之前的靠近终点奖励<span class="arithmatex"><span class="MathJax_Preview">r^n</span><script type="math/tex">r^n</script></span>改为：
+<div><span class="MathJax_Preview">$$
+r^n=\mu(||p_{t-1}-g||-\gamma||p_t-g||)
+$$</span><script type="math/tex; mode=display">
+r^n=\mu(||p_{t-1}-g||-\gamma||p_t-g||)
+</script>
+</div>
+每当智能体接近终点时就会收到正向奖励，而远离终点时则会受到负向惩罚，这种<strong>有正有负的双向奖励</strong>要比仅针对靠近终点行为的单方面正奖励有更强的引导作用，而且还能防止智能体学会反复靠近、远离终点来赚取高额积累收益的行为。</p>
+<p><strong>非势能塑形回报</strong></p>
+<p>​       在实践中，还经常采用一种静态的塑形回报，与状态切换无关，直接将势能函数<span class="arithmatex"><span class="MathJax_Preview">\phi(s)</span><script type="math/tex">\phi(s)</script></span>作为塑形回报，随着智能体离主线任务目标越来越近时，塑形回报会越来越大，并且在终点位置达到最大，从而引导智能体朝着终点方向探索和加速算法的收敛。在实际的应用中，如果使用静态塑形回报，则最好采用负反馈塑形回报，迫使智能体为了减少受到的惩罚而尽快完成目标任务，因为如果采用正反馈塑形回报的话容易陷入“bug”中，智能体会停在原地获得高额回报。</p>
+<p>​       回报塑形不仅可以应用于主线事件对应的目标，也同样可以帮助子目标的学习。例如之前的二维平面导航任务中，避免碰撞和防止电量过低两个子目标所对应的非势能塑形回报可以表示为：
+<div><span class="MathJax_Preview">$$
+r^c=-\beta\cdot\max(D-d_{min},0)\\
+r^e=-w\cdot\max(E-e_{left},0)
+$$</span><script type="math/tex; mode=display">
+r^c=-\beta\cdot\max(D-d_{min},0)\\
+r^e=-w\cdot\max(E-e_{left},0)
+</script>
+</div>
+在突破了安全距离<span class="arithmatex"><span class="MathJax_Preview">D</span><script type="math/tex">D</script></span>和充电预警<span class="arithmatex"><span class="MathJax_Preview">E</span><script type="math/tex">E</script></span>之后，智能体与障碍物距离越近、剩余电量越低，其受到的惩罚就越大，因此更具有引导作用。</p>
+<p>注：其实就是将固定的奖励/惩罚转变为线性变化的奖励/惩罚，并且变化范围跟状态信息有关。</p>
+<p>​       塑形回报不仅是稠密的，而且天然存在与之即时联动的状态信息。例如在二维平面导航任务中，智能体与终点之间的距离<span class="arithmatex"><span class="MathJax_Preview">||p-g||</span><script type="math/tex">||p-g||</script></span>、与障碍物的最小距离<span class="arithmatex"><span class="MathJax_Preview">d_{min}</span><script type="math/tex">d_{min}</script></span>和当前剩余电量<span class="arithmatex"><span class="MathJax_Preview">e_{left}</span><script type="math/tex">e_{left}</script></span>等等，他们不仅是各自塑形回报的直接相关信息，<span class="arithmatex"><span class="MathJax_Preview">d_{min}</span><script type="math/tex">d_{min}</script></span>和<span class="arithmatex"><span class="MathJax_Preview">e_{left}</span><script type="math/tex">e_{left}</script></span>更与塑形回报的<strong>渐进式变化呈线性相关</strong>，十分有利于DRL算法的神经网络学习从状态信息中高效地提取特征，并且准确地建立其与值估计和最优决策之间的相关性。</p>
+<p>注：与子目标回报一样，塑形回报的设计同样建立在对任务逻辑的深入理解之上，并且需要用到领域知识，实际情况中，常常采样子目标回报和塑形回报组成的混合辅助回报。</p>
+<h4 id="_18">内驱回报<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h4>
+<p>​       在现实世界中，我们除了希望智能体能够本能地对来自外部的反馈信号做出趋利避害的反应，还希望智能体可以主动去探索位置环境，对此，在强化学习中引入了内驱回报的概念，内驱回报不针对任何具体的子目标，无差别地鼓励智能体主动探索未知状态，并借此增加正样本和有益行为的发生概率。</p>
+<p>​       内驱回报的典型代表就是基于好奇心的探索红利，根据好奇心的定义和实现方法的不同，可以分为三类：</p>
+<ul>
+<li>基于状态计数的好奇心，通过统计状态空间中不同状态的访问次数并按照反比给予奖励，从而鼓励智能体更多地探索新状态</li>
+<li>基于预测误差的好奇心，将状态的未知程度定义为对未来信息的预测误差，误差越大说明策略对该状态越陌生，相应的好奇心奖励也应该越多</li>
+<li>基于伪目标生成的好奇心，通过自适应地对当前策略下“勉强”可达的状态给予好奇心奖励，使其不断成为新的子目标，从而起到鼓励探索的作用</li>
+</ul>
+<p>​       在二维平面导航任务中，假如状态信息中不包含充电桩的位置，那么智能体在环境中的主动探索就显得尤为重要。在离散化空间编码的表征下，状态空间维度有限且规模适中，因此可以采用基于表格计数的好奇心回报设计。假设<span class="arithmatex"><span class="MathJax_Preview">c(s,a)</span><script type="math/tex">c(s,a)</script></span>代表之前的探索中在状态<span class="arithmatex"><span class="MathJax_Preview">s</span><script type="math/tex">s</script></span>下选择动作<span class="arithmatex"><span class="MathJax_Preview">a</span><script type="math/tex">a</script></span>的次数统计，智能体的内驱回报表示为：
+<div><span class="MathJax_Preview">$$
+r^i=\frac{\rho}{\sqrt {c(s,a)}}
+$$</span><script type="math/tex; mode=display">
+r^i=\frac{\rho}{\sqrt {c(s,a)}}
+</script>
+</div>
+通过该内驱回报的作用，可以鼓励智能体去探索地图中从未到达过的区域并且尽可能选择多样化的动作，从而主动发现所有充电桩的位置，以及充电操作和剩余电量变化之间的相关性，为后续更高效地抵达终点、合理地规划充电时机和充电路径奠定基础。</p>
+<p><strong>补充：回报取值的注意事项</strong></p>
+<p>​       在实际应用中，对于主线回报适合设计为正向奖励，辅助回报最好设计为负向惩罚，并且为了保证主线任务的核心地位，各项辅助回报通常都会采用比较小的数值。主线回报与各项辅助回报之间的相对取值唯一决定了回报函数的整体逻辑功能，而所有回报项的等比缩放不会改变这一功能。</p>
+<p>未完待续。。。</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.cd18aaf1.min.js"></script>
+      
+        <script src="../../mathjax-config.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
+      
+        <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      
+    
+  </body>
+</html>

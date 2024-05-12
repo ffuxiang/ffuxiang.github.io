@@ -1,0 +1,5119 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="ffx">
+      
+      
+        <link rel="canonical" href="https://ffuxiang.gitee.io/other_paper/Cycle_GAN/">
+      
+      
+        <link rel="prev" href="../attention/">
+      
+      
+        <link rel="next" href="../saliency_sampling/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.14">
+    
+    
+      
+        <title>Cycle GAN - ffx的个人博客</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.fad675c6.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cycle_gan" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ffx的个人博客" class="md-header__button md-logo" aria-label="ffx的个人博客" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ffx的个人博客
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Cycle GAN
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://ffuxiang.gitee.io/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Ffuxiang
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ffx的个人博客" class="md-nav__button md-logo" aria-label="ffx的个人博客" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    ffx的个人博客
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://ffuxiang.gitee.io/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Ffuxiang
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resume/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    个人简历
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../fined_domain/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    细粒度/域适应笔记
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    目标检测
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            目标检测
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/detection_sum/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    目标检测汇总
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    关键概念
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            关键概念
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/concept/anchor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    锚点
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/concept/regression/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    回归参数
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/concept/IoU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    IoU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    通用程序
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            通用程序
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3_1" id="__nav_4_3_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    数据增强
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            数据增强
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/program/data_augment/affine/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    仿射变换
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/program/data_augment/mosaic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mosaic增强
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/program/anchor_gen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    锚点生成
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/program/anchor_match/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    锚点匹配
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/program/regression/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    参数编码解码
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/program/IoU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    计算IoU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/program/train/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    训练程序
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    检测网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            检测网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4_1" id="__nav_4_4_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Faster R-CNN
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            Faster R-CNN
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/network/Faster_RCNN/structure/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    网络结构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/network/Faster_RCNN/RPN/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RPN模块
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/network/Faster_RCNN/ROI_Head/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ROI Head模块
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/network/RetinaNet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RetinaNet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4_3" id="__nav_4_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    YOLO系列
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            YOLO系列
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/network/YOLO/YOLOv3_SPP/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    YOLOv3-SPP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/network/YOLO/YOLOv4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    YOLOv4
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/DETR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DETR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/DeDETR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deformable DETR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    常用模块
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            常用模块
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/module/FPN/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FPN
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/module/FL/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../detection/module/NL/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    自动驾驶
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            自动驾驶
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    论文笔记
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            论文笔记
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../auto/paper/HADAR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HADAR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../auto/paper/BEVFormer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    BEVFormer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/DeDETR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deformable DETR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../auto/PCV/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    点云可视化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../auto/PCC/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    点云与图像映射
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    视觉SLAM
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            视觉SLAM
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../auto/SLAM/SLAM_ch3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    三维空间刚体运动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    transformer系列
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            transformer系列
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/transformer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Transformer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/ViT/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ViT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/Swin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Swin Transformer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/DETR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DETR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/DeDETR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deformable DETR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/Maskformer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Maskformer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/ViT_Adapter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ViT Adapter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/DINO/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DINO
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transformer/CLIP/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CLIP及相关改进工作
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    强化学习
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            强化学习
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../RL/DQN/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DQN算法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../RL/AC/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AC算法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../RL/PPO/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PPO算法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../RL/DDPG/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DDPG算法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../RL/landing_guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    《RL落地指南》笔记
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    图像增强
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            图像增强
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_1" id="__nav_8_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    HDR
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_1">
+            <span class="md-nav__icon md-icon"></span>
+            HDR
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../img_enhance/HDR/HDR-Transformer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HDT-Transformer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    扩散模型
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            扩散模型
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../img_enhance/DDPM/DDPM/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DDPM
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../img_enhance/DDPM/GDP/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GDP
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    数据集
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            数据集
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../img_enhance/dataset/deraining/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    去雨
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../img_enhance/dataset/HDR_dataset/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HDR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_4" id="__nav_8_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    评测指标
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_4">
+            <span class="md-nav__icon md-icon"></span>
+            评测指标
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../img_enhance/matrix/PSNR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PSNR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../img_enhance/matrix/SSIM/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SSIM
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    其他论文
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            其他论文
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PartialConv/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    局部卷积
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../attention/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    注意力机制
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Cycle GAN
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Cycle GAN
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      综述
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      网络结构
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      生成器
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="生成器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      主要的卷积模块
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      判别器
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      初始化参数
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      训练流程
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../saliency_sampling/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    显著性采样
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../GradCAM/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Grad-CAM
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    PyTorch
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            PyTorch
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/sum_pytorch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PyTorch学习笔记汇总
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2" id="__nav_10_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    nn方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2">
+            <span class="md-nav__icon md-icon"></span>
+            nn方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2_1" id="__nav_10_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    网络结构
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_10_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            网络结构
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.Linear/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Linear
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.Conv2d/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Conv2d
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.BatchNorm2d/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.BatchNorm2d
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.AvgPool2d/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.AvgPool2d
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.AdaptiveAvgPool2d/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.AdaptiveAvgPool2d
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.Dropout/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Dropout
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.MultiheadAttention/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.MultiheadAttention
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/layers/nn.Embedding/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Embedding
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2_2" id="__nav_10_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    激活函数
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_10_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            激活函数
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/activations/nn.ReLU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.ReLU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/activations/nn.LeakyReLU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.LeakyReLU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/activations/nn.PReLU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.PReLU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/activations/nn.Sigmoid/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Sigmoid
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/activations/nn.Tanh/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.Tanh
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/activations/nn.GELU/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.GeLU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2_3" id="__nav_10_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    损失函数
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_10_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            损失函数
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/loss_functions/nn.L1Loss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.L1Loss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/loss_functions/nn.MSELoss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.MSELoss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/loss_functions/nn.CrossEntropyLoss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.CrossEntropyLoss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/loss_functions/nn.KLDivLoss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.KLDivLoss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/loss_functions/nn.MarginRankingLoss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.MarginRankingLoss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/loss_functions/nn.SmoothL1Loss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.SmoothL1Loss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/loss_functions/nn.TripletMarginLoss/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nn.TripletMarginLoss
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_2_4" id="__nav_10_2_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    nn.functional方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_10_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            nn.functional方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/F/F.interpolate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    F.interpolate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/nn/F/F.normalize/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    F.normalize
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_3" id="__nav_10_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    utils.data方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_3">
+            <span class="md-nav__icon md-icon"></span>
+            utils.data方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/data/data.RandomSampler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    data.RandomSampler
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/data/data.WeightedRandomSampler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    data.WeightedRandomSampler
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/data/data.BatchSampler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    data.BatchSampler
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_4" id="__nav_10_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    optim方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_4">
+            <span class="md-nav__icon md-icon"></span>
+            optim方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/optim/LambdaLR/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LambdaLR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_5" id="__nav_10_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    torch方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_5">
+            <span class="md-nav__icon md-icon"></span>
+            torch方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.cat_torch.stack/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.cat与torch.stack
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.chunk/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.chunk
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.clamp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.clamp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.div/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.div
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.ge_gt_le_lt_ne_eq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.ge_gt_le_lt_ne_eq
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.from_numpy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.from_numpy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.gather/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.gather
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.index_select/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.index_select
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.max/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.max
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.mul/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.mul
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.nonzero/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.nonzero
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.repeat_interleave_tensor.repeat/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.repeat_interleave与tensor.repeat
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.squeeze_torch.unsqueeze/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.squeeze与torch.unsqueeze
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.transpose_tensor.permute/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.transpose与tensor.permute
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/torch/torch.where/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    torch.where
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_10_6" id="__nav_10_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    其他方法
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_6">
+            <span class="md-nav__icon md-icon"></span>
+            其他方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/other_method/hook/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    hook模块
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/other_method/train_eval/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    train与eval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/other_method/cuda/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    cuda方法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../PyTorch/question/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    常见问题
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    常用Python库
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            常用Python库
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/tqdm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    tqdm
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/rearrange/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    rearrange
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    LaTeX
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            LaTeX
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../LaTeX/symbol/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    特殊符号
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Linux
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            Linux
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_13_1" id="__nav_13_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Linux常用指令
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_13_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_1">
+            <span class="md-nav__icon md-icon"></span>
+            Linux常用指令
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/instruct/conda_pip/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    conda pip
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/instruct/bypy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    bypy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/instruct/screen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    screen命令
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/instruct/apt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    apt命令
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/instruct/PID/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    查看进程信息
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_13_2" id="__nav_13_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    报错记录
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_13_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_2">
+            <span class="md-nav__icon md-icon"></span>
+            报错记录
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/error/sum_error/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    汇总
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_13_2_2" id="__nav_13_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    系统相关
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_13_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            系统相关
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/error/linux1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Failed CC version
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_13_2_3" id="__nav_13_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    NVIDIA
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_13_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            NVIDIA
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/error/nvidia/nvidia1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NVIDIA-SMI has failed
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/error/nvidia/nvidia2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NVIDIA kernel module already loaded
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    其他
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            其他
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../other/email/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    邮件模板
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../other/website/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    网站汇总
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../other/program/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    常用程序
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      综述
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      网络结构
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      生成器
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="生成器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      主要的卷积模块
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      判别器
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      初始化参数
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      训练流程
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="cycle_gan">Cycle GAN<a class="headerlink" href="#cycle_gan" title="Permanent link">&para;</a></h1>
+<h2 id="_1">综述<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>会议时间：IEEE International Conference on Computer Vision 2017 (ICCV 2017)</p>
+<p>论文地址：<a href="https://openaccess.thecvf.com/content_ICCV_2017/papers/Zhu_Unpaired_Image-To-Image_Translation_ICCV_2017_paper.pdf">https://openaccess.thecvf.com/content_ICCV_2017/papers/Zhu_Unpaired_Image-To-Image_Translation_ICCV_2017_paper.pdf</a></p>
+<p>源码地址：<a href="https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix">https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix</a></p>
+<p>针对领域：对抗生成网络、图像转换</p>
+</blockquote>
+<h2 id="_2">网络结构<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p><center></p>
+<p><img alt="cycle_gan" src="../img/cycle_gan.jpg" /></p>
+<p></center></p>
+<p><strong>损失函数</strong></p>
+<p>论文中主要提到三种损失：</p>
+<ul>
+<li>一致性损失：A域图像X从A转换到B，再从B转回A，得到图像Y，将最终输出的图像Y和原始输入图像X做<span class="arithmatex"><span class="MathJax_Preview">l_1</span><script type="math/tex">l_1</script></span>损失，对于B域的图像也有类似的损失；</li>
+<li>鉴别器A和鉴别器B的分类损失。</li>
+</ul>
+<p>源码中还提到一种损失：</p>
+<ul>
+<li>identity损失：A域图像X传入B到A的生成器中，得到图像Y，将Y和X做<span class="arithmatex"><span class="MathJax_Preview">l_1</span><script type="math/tex">l_1</script></span>损失，训练网络的识别能力，辅助网络真正理解A域信息，对于A到B的生成器有类似的损失。</li>
+</ul>
+<h2 id="_3">生成器<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>以ResNet为基础</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ResnetGenerator</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resnet-based generator that consists of Resnet blocks between a few downsampling/upsampling operations.</span>
+
+<span class="sd">    We adapt Torch code and idea from Justin Johnson&#39;s neural style transfer project(https://github.com/jcjohnson/fast-neural-style)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_nc</span><span class="p">,</span> <span class="n">output_nc</span><span class="p">,</span> <span class="n">ngf</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">norm_layer</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">,</span> <span class="n">use_dropout</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_blocks</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">padding_type</span><span class="o">=</span><span class="s1">&#39;reflect&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a Resnet-based generator</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            input_nc (int)      -- 输入图片的通道数(the number of channels in input images)</span>
+<span class="sd">            output_nc (int)     -- 期望输出图片的通道数(the number of channels in output images)</span>
+<span class="sd">            ngf (int)           -- 采样开始时的通道数，默认64(the number of filters in the last conv layer)</span>
+<span class="sd">            norm_layer          -- 标准化层(normalization layer)</span>
+<span class="sd">            use_dropout (bool)  -- ResNet卷积模块是否使用dropout层(if use dropout layers)</span>
+<span class="sd">            n_blocks (int)      -- ResNet卷积模块的数量(the number of ResNet blocks)</span>
+<span class="sd">            padding_type (str)  -- 填充操作方法(the name of padding layer in conv layers: reflect | replicate | zero)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">n_blocks</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ResnetGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">norm_layer</span><span class="p">)</span> <span class="o">==</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">:</span>
+            <span class="n">use_bias</span> <span class="o">=</span> <span class="n">norm_layer</span><span class="o">.</span><span class="n">func</span> <span class="o">==</span> <span class="n">nn</span><span class="o">.</span><span class="n">InstanceNorm2d</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">use_bias</span> <span class="o">=</span> <span class="n">norm_layer</span> <span class="o">==</span> <span class="n">nn</span><span class="o">.</span><span class="n">InstanceNorm2d</span>
+        <span class="c1"># nn.ReflectionPad2d表示镜像填充</span>
+        <span class="c1"># 定义第一个卷积模块，将图片通道数调整为64</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">ReflectionPad2d</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+                 <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">input_nc</span><span class="p">,</span> <span class="n">ngf</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">use_bias</span><span class="p">),</span>
+                 <span class="n">norm_layer</span><span class="p">(</span><span class="n">ngf</span><span class="p">),</span>
+                 <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="kc">True</span><span class="p">)]</span>
+
+        <span class="n">n_downsampling</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="c1"># 添加下采样层</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_downsampling</span><span class="p">):</span>  <span class="c1"># add downsampling layers</span>
+            <span class="c1"># i表示下采样的次数，mult表示通道放大的倍数，通道变化情况64-&gt;128-&gt;256。</span>
+            <span class="c1"># 并且每下采样一次，图片长宽尺寸变为原来的二分之一</span>
+            <span class="n">mult</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">i</span>
+            <span class="n">model</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">ngf</span> <span class="o">*</span> <span class="n">mult</span><span class="p">,</span> <span class="n">ngf</span> <span class="o">*</span> <span class="n">mult</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">use_bias</span><span class="p">),</span>
+                      <span class="n">norm_layer</span><span class="p">(</span><span class="n">ngf</span> <span class="o">*</span> <span class="n">mult</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
+                      <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="kc">True</span><span class="p">)]</span>
+
+        <span class="n">mult</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">n_downsampling</span>
+        <span class="c1"># 添加ResNet模块，即主要的特征提取，数据转换模块</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">):</span>
+            <span class="c1"># padding_type表示填充类型，norm_layer表示归一化层，use_dropout表示是否使用dropout，use_bias表示卷积层是否使用偏置参数</span>
+            <span class="n">model</span> <span class="o">+=</span> <span class="p">[</span><span class="n">ResnetBlock</span><span class="p">(</span><span class="n">ngf</span> <span class="o">*</span> <span class="n">mult</span><span class="p">,</span> <span class="n">padding_type</span><span class="o">=</span><span class="n">padding_type</span><span class="p">,</span> <span class="n">norm_layer</span><span class="o">=</span><span class="n">norm_layer</span><span class="p">,</span> <span class="n">use_dropout</span><span class="o">=</span><span class="n">use_dropout</span><span class="p">,</span> <span class="n">use_bias</span><span class="o">=</span><span class="n">use_bias</span><span class="p">)]</span>
+        <span class="c1"># 添加上采样层，这里与下采样层类似</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_downsampling</span><span class="p">):</span>  <span class="c1"># add upsampling layers</span>
+            <span class="n">mult</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">n_downsampling</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
+            <span class="c1"># 唯一不同的是这里使用逆卷积操作，来扩大图像尺寸</span>
+            <span class="n">model</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">ConvTranspose2d</span><span class="p">(</span><span class="n">ngf</span> <span class="o">*</span> <span class="n">mult</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">ngf</span> <span class="o">*</span> <span class="n">mult</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+                                         <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                         <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">output_padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                         <span class="n">bias</span><span class="o">=</span><span class="n">use_bias</span><span class="p">),</span>
+                      <span class="n">norm_layer</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ngf</span> <span class="o">*</span> <span class="n">mult</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span>
+                      <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="kc">True</span><span class="p">)]</span>
+        <span class="c1"># 添加最后一层卷积模块，将图像通道数从64转换为指定的通道数，如果是三色图，则将输出通道数转为3</span>
+        <span class="n">model</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">ReflectionPad2d</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+        <span class="n">model</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">ngf</span><span class="p">,</span> <span class="n">output_nc</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>
+        <span class="n">model</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">()]</span>
+        <span class="c1"># 将模型操作合并</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Standard forward&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="_4">主要的卷积模块<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ResnetBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Define a Resnet block&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">padding_type</span><span class="p">,</span> <span class="n">norm_layer</span><span class="p">,</span> <span class="n">use_dropout</span><span class="p">,</span> <span class="n">use_bias</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Resnet block</span>
+
+<span class="sd">        A resnet block is a conv block with skip connections</span>
+<span class="sd">        We construct a conv block with build_conv_block function,</span>
+<span class="sd">        and implement skip connections in &lt;forward&gt; function.</span>
+<span class="sd">        Original Resnet paper: https://arxiv.org/pdf/1512.03385.pdf</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ResnetBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># 定义主要的卷积模块，包括卷积层和dropout层</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_conv_block</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">padding_type</span><span class="p">,</span> <span class="n">norm_layer</span><span class="p">,</span> <span class="n">use_dropout</span><span class="p">,</span> <span class="n">use_bias</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">build_conv_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">padding_type</span><span class="p">,</span> <span class="n">norm_layer</span><span class="p">,</span> <span class="n">use_dropout</span><span class="p">,</span> <span class="n">use_bias</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a convolutional block.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            dim (int)           -- the number of channels in the conv layer.</span>
+<span class="sd">            padding_type (str)  -- the name of padding layer: reflect | replicate | zero</span>
+<span class="sd">            norm_layer          -- normalization layer</span>
+<span class="sd">            use_dropout (bool)  -- if use dropout layers.</span>
+<span class="sd">            use_bias (bool)     -- if the conv layer uses bias or not</span>
+
+<span class="sd">        Returns a conv block (with a conv layer, a normalization layer, and a non-linearity layer (ReLU))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">conv_block</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># 填充策略，这里也可以通过指定Conv2d里的参数来实现选择填充的策略</span>
+        <span class="c1"># reflect表示镜像填充，以矩阵边缘为对称轴，将反方向的对称元素填充到最外围</span>
+        <span class="k">if</span> <span class="n">padding_type</span> <span class="o">==</span> <span class="s1">&#39;reflect&#39;</span><span class="p">:</span>
+            <span class="n">conv_block</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">ReflectionPad2d</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="c1"># replicate表示复制填充，使用输入边界的复制值填充张量</span>
+        <span class="k">elif</span> <span class="n">padding_type</span> <span class="o">==</span> <span class="s1">&#39;replicate&#39;</span><span class="p">:</span>
+            <span class="n">conv_block</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">ReplicationPad2d</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="c1"># zero表示零填充</span>
+        <span class="k">elif</span> <span class="n">padding_type</span> <span class="o">==</span> <span class="s1">&#39;zero&#39;</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;padding [</span><span class="si">%s</span><span class="s1">] is not implemented&#39;</span> <span class="o">%</span> <span class="n">padding_type</span><span class="p">)</span>
+        <span class="c1"># 添加一层卷积层</span>
+        <span class="n">conv_block</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">use_bias</span><span class="p">),</span> <span class="n">norm_layer</span><span class="p">(</span><span class="n">dim</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="kc">True</span><span class="p">)]</span>
+        <span class="c1"># 如果指定use_dropout为true的话，则添加一层dropout层</span>
+        <span class="k">if</span> <span class="n">use_dropout</span><span class="p">:</span>
+            <span class="n">conv_block</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)]</span>
+
+        <span class="c1"># 下面再定义一层卷积，和上面一样，先选择填充策略，再添加卷积层</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">padding_type</span> <span class="o">==</span> <span class="s1">&#39;reflect&#39;</span><span class="p">:</span>
+            <span class="n">conv_block</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">ReflectionPad2d</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="k">elif</span> <span class="n">padding_type</span> <span class="o">==</span> <span class="s1">&#39;replicate&#39;</span><span class="p">:</span>
+            <span class="n">conv_block</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">ReplicationPad2d</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="k">elif</span> <span class="n">padding_type</span> <span class="o">==</span> <span class="s1">&#39;zero&#39;</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;padding [</span><span class="si">%s</span><span class="s1">] is not implemented&#39;</span> <span class="o">%</span> <span class="n">padding_type</span><span class="p">)</span>
+        <span class="n">conv_block</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">use_bias</span><span class="p">),</span> <span class="n">norm_layer</span><span class="p">(</span><span class="n">dim</span><span class="p">)]</span>
+        <span class="c1"># 将所有的模块(填充层(如果有的话)、卷积层、dropout层)合并为一个模块</span>
+        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">conv_block</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward function (with skip connections)&quot;&quot;&quot;</span>
+        <span class="c1"># 添加跳跃连接，即残差映射</span>
+        <span class="c1"># 特征图先经过定义好的卷积模块，再与输入特征图相加</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv_block</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># add skip connections</span>
+        <span class="k">return</span> <span class="n">out</span>
+</code></pre></div>
+<h2 id="_5">判别器<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">NLayerDiscriminator</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines a PatchGAN discriminator&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_nc</span><span class="p">,</span> <span class="n">ndf</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">n_layers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">norm_layer</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a PatchGAN discriminator</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            input_nc (int)  -- the number of channels in input images</span>
+<span class="sd">            ndf (int)       -- the number of filters in the last conv layer</span>
+<span class="sd">            n_layers (int)  -- the number of conv layers in the discriminator</span>
+<span class="sd">            norm_layer      -- normalization layer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NLayerDiscriminator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">norm_layer</span><span class="p">)</span> <span class="o">==</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">:</span>  <span class="c1"># no need to use bias as BatchNorm2d has affine parameters</span>
+            <span class="n">use_bias</span> <span class="o">=</span> <span class="n">norm_layer</span><span class="o">.</span><span class="n">func</span> <span class="o">==</span> <span class="n">nn</span><span class="o">.</span><span class="n">InstanceNorm2d</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">use_bias</span> <span class="o">=</span> <span class="n">norm_layer</span> <span class="o">==</span> <span class="n">nn</span><span class="o">.</span><span class="n">InstanceNorm2d</span>
+        <span class="c1"># 第一层卷积的卷积核尺寸和padding大小，这里的卷积核尺寸默认为4</span>
+        <span class="n">kw</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">padw</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="c1"># 添加第一层卷积，主要用于下采样以及改变通道数，将特征图通道数从3改成64</span>
+        <span class="n">sequence</span> <span class="o">=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">input_nc</span><span class="p">,</span> <span class="n">ndf</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="n">kw</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">padw</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="kc">True</span><span class="p">)]</span>
+        <span class="n">nf_mult</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">nf_mult_prev</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="c1"># 逐一添加核心卷积层的个数，一共添加n_layers个卷积模块(这里是不是要设成n_layers+1?)</span>
+        <span class="c1"># 每个卷积模块均由卷积层、标准化层、LeakyReLU激活层构成</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_layers</span><span class="p">):</span>  <span class="c1"># gradually increase the number of filters</span>
+            <span class="c1"># nf_mult_prev表示该模块输入特征图的通道放大倍数(倍数相对于64)</span>
+            <span class="c1"># 这里做一个更新赋值，即上一模块的输出倍数作为这一模块的输入倍数</span>
+            <span class="n">nf_mult_prev</span> <span class="o">=</span> <span class="n">nf_mult</span>
+            <span class="c1"># nf_mult表示该模块输出特征图的通道数放大倍数，最高放大8倍，即通道数最多为512</span>
+            <span class="n">nf_mult</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+            <span class="c1"># 增加卷积模块</span>
+            <span class="n">sequence</span> <span class="o">+=</span> <span class="p">[</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">ndf</span> <span class="o">*</span> <span class="n">nf_mult_prev</span><span class="p">,</span> <span class="n">ndf</span> <span class="o">*</span> <span class="n">nf_mult</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="n">kw</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">padw</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">use_bias</span><span class="p">),</span>
+                <span class="n">norm_layer</span><span class="p">(</span><span class="n">ndf</span> <span class="o">*</span> <span class="n">nf_mult</span><span class="p">),</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="c1"># 和for循环中类似，添加一个卷积模块</span>
+        <span class="n">nf_mult_prev</span> <span class="o">=</span> <span class="n">nf_mult</span>
+        <span class="n">nf_mult</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n_layers</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="n">sequence</span> <span class="o">+=</span> <span class="p">[</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">ndf</span> <span class="o">*</span> <span class="n">nf_mult_prev</span><span class="p">,</span> <span class="n">ndf</span> <span class="o">*</span> <span class="n">nf_mult</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="n">kw</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">padw</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">use_bias</span><span class="p">),</span>
+            <span class="n">norm_layer</span><span class="p">(</span><span class="n">ndf</span> <span class="o">*</span> <span class="n">nf_mult</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="c1"># 添加最后一层卷积，输入通道数设定为1，即输出一张预测图</span>
+        <span class="c1"># 因为是二分类，True or False，因此只需要输出一个数即可，越接近于1表示越倾向于True，越接近0表示越倾向于Fasle</span>
+        <span class="n">sequence</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">ndf</span> <span class="o">*</span> <span class="n">nf_mult</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="n">kw</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">padw</span><span class="p">)]</span>  <span class="c1"># output 1 channel prediction map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">sequence</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Standard forward.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="_6">初始化参数<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">weights_init_normal</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">):</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s2">&quot;bias&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">m</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">constant_</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">GroupNorm</span><span class="p">)):</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">constant_</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="_7">训练流程<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>数据的输入和参数的更新在train.py文件中主要体现在两行代码中</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 将数据传入模型</span>
+<span class="n">model</span><span class="o">.</span><span class="n">set_input</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>         <span class="c1"># unpack data from dataset and apply preprocessing</span>
+<span class="c1"># 更新模型的参数</span>
+<span class="n">model</span><span class="o">.</span><span class="n">optimize_parameters</span><span class="p">()</span>   <span class="c1"># calculate loss functions, get gradients, update network weights</span>
+</code></pre></div>
+<p>整个训练阶段（前向传播、计算损失、反向传播以及更新参数）被嵌入到一个大类中</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">CycleGANModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class implements the CycleGAN model, for learning image-to-image translation without paired data.</span>
+
+<span class="sd">    The model training requires &#39;--dataset_mode unaligned&#39; dataset.</span>
+<span class="sd">    By default, it uses a &#39;--netG resnet_9blocks&#39; ResNet generator,</span>
+<span class="sd">    a &#39;--netD basic&#39; discriminator (PatchGAN introduced by pix2pix),</span>
+<span class="sd">    and a least-square GANs objective (&#39;--gan_mode lsgan&#39;).</span>
+
+<span class="sd">    CycleGAN paper: https://arxiv.org/pdf/1703.10593.pdf</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">modify_commandline_options</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">is_train</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add new dataset-specific options, and rewrite default values for existing options.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            parser          -- original option parser</span>
+<span class="sd">            is_train (bool) -- whether training phase or test phase. You can use this flag to add training-specific or test-specific options.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            the modified parser.</span>
+
+<span class="sd">        For CycleGAN, in addition to GAN losses, we introduce lambda_A, lambda_B, and lambda_identity for the following losses.</span>
+<span class="sd">        A (source domain), B (target domain).</span>
+<span class="sd">        Generators: G_A: A -&gt; B; G_B: B -&gt; A.</span>
+<span class="sd">        Discriminators: D_A: G_A(A) vs. B; D_B: G_B(B) vs. A.</span>
+<span class="sd">        Forward cycle loss:  lambda_A * ||G_B(G_A(A)) - A|| (Eqn. (2) in the paper)</span>
+<span class="sd">        Backward cycle loss: lambda_B * ||G_A(G_B(B)) - B|| (Eqn. (2) in the paper)</span>
+<span class="sd">        Identity loss (optional): lambda_identity * (||G_A(B) - B|| * lambda_B + ||G_B(A) - A|| * lambda_A) (Sec 5.2 &quot;Photo generation from paintings&quot; in the paper)</span>
+<span class="sd">        Dropout is not used in the original CycleGAN paper.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">no_dropout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># default CycleGAN did not use dropout</span>
+        <span class="k">if</span> <span class="n">is_train</span><span class="p">:</span>
+            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--lambda_A&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;weight for cycle loss (A -&gt; B -&gt; A)&#39;</span><span class="p">)</span>
+            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--lambda_B&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;weight for cycle loss (B -&gt; A -&gt; B)&#39;</span><span class="p">)</span>
+            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--lambda_identity&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                                <span class="n">help</span><span class="o">=</span><span class="s1">&#39;use identity mapping. Setting lambda_identity other than 0 has an effect of scaling the weight of the identity mapping loss. For example, if the weight of the identity loss should be 10 times smaller than the weight of the reconstruction loss, please set lambda_identity = 0.1&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">parser</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the CycleGAN class.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            opt (Option class)-- stores all the experiment flags; needs to be a subclass of BaseOptions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">BaseModel</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+        <span class="c1"># specify the training losses you want to print out. The training/test scripts will call</span>
+        <span class="c1"># &lt;BaseModel.get_current_losses&gt;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;D_A&#39;</span><span class="p">,</span> <span class="s1">&#39;G_A&#39;</span><span class="p">,</span> <span class="s1">&#39;cycle_A&#39;</span><span class="p">,</span> <span class="s1">&#39;idt_A&#39;</span><span class="p">,</span> <span class="s1">&#39;D_B&#39;</span><span class="p">,</span> <span class="s1">&#39;G_B&#39;</span><span class="p">,</span> <span class="s1">&#39;cycle_B&#39;</span><span class="p">,</span> <span class="s1">&#39;idt_B&#39;</span><span class="p">]</span>
+        <span class="c1"># specify the images you want to save/display. The training/test scripts will call &lt;BaseModel.get_current_visuals&gt;</span>
+        <span class="n">visual_names_A</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;real_A&#39;</span><span class="p">,</span> <span class="s1">&#39;fake_B&#39;</span><span class="p">,</span> <span class="s1">&#39;rec_A&#39;</span><span class="p">]</span>
+        <span class="n">visual_names_B</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;real_B&#39;</span><span class="p">,</span> <span class="s1">&#39;fake_A&#39;</span><span class="p">,</span> <span class="s1">&#39;rec_B&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isTrain</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">lambda_identity</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>  <span class="c1"># if identity loss is used, we also visualize idt_B=G_A(B) ad idt_A=G_A(B)</span>
+            <span class="n">visual_names_A</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;idt_B&#39;</span><span class="p">)</span>
+            <span class="n">visual_names_B</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;idt_A&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">visual_names</span> <span class="o">=</span> <span class="n">visual_names_A</span> <span class="o">+</span> <span class="n">visual_names_B</span>  <span class="c1"># combine visualizations for A and B</span>
+        <span class="c1"># specify the models you want to save to the disk. The training/test scripts will call</span>
+        <span class="c1"># &lt;BaseModel.save_networks&gt; and &lt;BaseModel.load_networks&gt;.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isTrain</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;G_A&#39;</span><span class="p">,</span> <span class="s1">&#39;G_B&#39;</span><span class="p">,</span> <span class="s1">&#39;D_A&#39;</span><span class="p">,</span> <span class="s1">&#39;D_B&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># during test time, only load Gs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;G_A&#39;</span><span class="p">,</span> <span class="s1">&#39;G_B&#39;</span><span class="p">]</span>
+
+        <span class="c1"># define networks (both Generators and discriminators)</span>
+        <span class="c1"># The naming is different from those used in the paper.</span>
+        <span class="c1"># Code (vs. paper): G_A (G), G_B (F), D_A (D_Y), D_B (D_X)</span>
+        <span class="c1"># 定义生成器，后缀为A的变量表示以A为输入的生成器，简称生成器A</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">netG_A</span> <span class="o">=</span> <span class="n">networks</span><span class="o">.</span><span class="n">define_G</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">input_nc</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">output_nc</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">ngf</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">netG</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span>
+                                        <span class="ow">not</span> <span class="n">opt</span><span class="o">.</span><span class="n">no_dropout</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">init_type</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">init_gain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpu_ids</span><span class="p">)</span>
+        <span class="c1"># 同理，后缀为B的变量表示以B为输入的生成器，简称生成器B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">netG_B</span> <span class="o">=</span> <span class="n">networks</span><span class="o">.</span><span class="n">define_G</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">output_nc</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">input_nc</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">ngf</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">netG</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span>
+                                        <span class="ow">not</span> <span class="n">opt</span><span class="o">.</span><span class="n">no_dropout</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">init_type</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">init_gain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpu_ids</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isTrain</span><span class="p">:</span>  <span class="c1"># define discriminators</span>
+            <span class="c1"># 如果是训练阶段的话则需要定义判别器</span>
+            <span class="c1"># 这里后缀A、B分别表示用于优化生成器A、B的判别器，如:netD_A表示用于优化netG_A的判别器，简称判别器A</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">netD_A</span> <span class="o">=</span> <span class="n">networks</span><span class="o">.</span><span class="n">define_D</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">output_nc</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">ndf</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">netD</span><span class="p">,</span>
+                                            <span class="n">opt</span><span class="o">.</span><span class="n">n_layers_D</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">init_type</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">init_gain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpu_ids</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">netD_B</span> <span class="o">=</span> <span class="n">networks</span><span class="o">.</span><span class="n">define_D</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">input_nc</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">ndf</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">netD</span><span class="p">,</span>
+                                            <span class="n">opt</span><span class="o">.</span><span class="n">n_layers_D</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">init_type</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">init_gain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpu_ids</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isTrain</span><span class="p">:</span>
+            <span class="c1"># 训练阶段的话，需要定义损失函数和优化器</span>
+            <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">lambda_identity</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>  <span class="c1"># only works when input and output images have the same number of channels</span>
+                <span class="k">assert</span> <span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">input_nc</span> <span class="o">==</span> <span class="n">opt</span><span class="o">.</span><span class="n">output_nc</span><span class="p">)</span>
+            <span class="c1"># 创建图像缓冲区</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fake_A_pool</span> <span class="o">=</span> <span class="n">ImagePool</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">pool_size</span><span class="p">)</span>  <span class="c1"># create image buffer to store previously generated images</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fake_B_pool</span> <span class="o">=</span> <span class="n">ImagePool</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">pool_size</span><span class="p">)</span>  <span class="c1"># create image buffer to store previously generated images</span>
+            <span class="c1"># define loss functions</span>
+            <span class="c1"># criterionGAN表示用于计算判别器损失的损失函数，常用交叉熵损失或MSE损失</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">criterionGAN</span> <span class="o">=</span> <span class="n">networks</span><span class="o">.</span><span class="n">GANLoss</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">gan_mode</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>  <span class="c1"># define GAN loss.</span>
+            <span class="c1"># criterionCycle表示计算循环损失的损失函数</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">criterionCycle</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">L1Loss</span><span class="p">()</span>
+            <span class="c1"># criterionIdt表示衡量图像质量的损失函数，对各个通道元素计算L1损失</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">criterionIdt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">L1Loss</span><span class="p">()</span>
+            <span class="c1"># initialize optimizers; schedulers will be automatically created by function &lt;BaseModel.setup&gt;.</span>
+            <span class="c1"># 分别定义生成器的优化器和判别器的优化器</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_G</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">netG_A</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">netG_B</span><span class="o">.</span><span class="n">parameters</span><span class="p">()),</span>
+                                                <span class="n">lr</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">beta1</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_D</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">netD_A</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">netD_B</span><span class="o">.</span><span class="n">parameters</span><span class="p">()),</span>
+                                                <span class="n">lr</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">beta1</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer_G</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer_D</span><span class="p">)</span>
+
+    <span class="c1"># 输入和标签时，调用这个函数</span>
+    <span class="k">def</span> <span class="nf">set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Unpack input data from the dataloader and perform necessary pre-processing steps.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            input (dict): include the data itself and its metadata information.</span>
+
+<span class="sd">        The option &#39;direction&#39; can be used to swap domain A and domain B.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># direction用于交换A、B两个领域的输入数据</span>
+        <span class="n">AtoB</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;AtoB&#39;</span>
+        <span class="c1"># self.real_A表示A领域的真实图像</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">real_A</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="s1">&#39;A&#39;</span> <span class="k">if</span> <span class="n">AtoB</span> <span class="k">else</span> <span class="s1">&#39;B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="c1"># self.real_B表示B领域的真实图像</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">real_B</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="s1">&#39;B&#39;</span> <span class="k">if</span> <span class="n">AtoB</span> <span class="k">else</span> <span class="s1">&#39;A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_paths</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="s1">&#39;A_paths&#39;</span> <span class="k">if</span> <span class="n">AtoB</span> <span class="k">else</span> <span class="s1">&#39;B_paths&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run forward pass; called by both functions &lt;optimize_parameters&gt; and &lt;test&gt;.&quot;&quot;&quot;</span>
+        <span class="c1"># 前向传播阶段</span>
+        <span class="c1"># 将A领域的真实图像传入生成器A中，得到生成的B图像</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fake_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">netG_A</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real_A</span><span class="p">)</span>  <span class="c1"># G_A(A)</span>
+        <span class="c1"># 将生成的B图像传入生成器B中，得到二次生成的A领域图像</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rec_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">netG_B</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fake_B</span><span class="p">)</span>  <span class="c1"># G_B(G_A(A))</span>
+        <span class="c1"># 下述同理，将真实B图像连续传入生成器B和生成器A，得到生成的A和二次生成的B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fake_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">netG_B</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real_B</span><span class="p">)</span>  <span class="c1"># G_B(B)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rec_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">netG_A</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fake_A</span><span class="p">)</span>  <span class="c1"># G_A(G_B(B))</span>
+
+    <span class="c1"># 判别器的反向传播，计算损失过程，这里定义了两个判别器相同的过程(即基础过程)</span>
+    <span class="k">def</span> <span class="nf">backward_D_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">netD</span><span class="p">,</span> <span class="n">real</span><span class="p">,</span> <span class="n">fake</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate GAN loss for the discriminator</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            netD (network)      -- the discriminator D</span>
+<span class="sd">            real (tensor array) -- real images 真实图</span>
+<span class="sd">            fake (tensor array) -- images generated by a generator 生成图</span>
+
+<span class="sd">        Return the discriminator loss.</span>
+<span class="sd">        We also call loss_D.backward() to calculate the gradients.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Real</span>
+        <span class="c1"># 将真实图像传入判别器中，生成真实图的预测值，并且与True做损失</span>
+        <span class="n">pred_real</span> <span class="o">=</span> <span class="n">netD</span><span class="p">(</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">loss_D_real</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterionGAN</span><span class="p">(</span><span class="n">pred_real</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Fake</span>
+        <span class="c1"># 将生成的图像(假图像)传入判别器中，生成假图的预测值，并与Fasle做损失</span>
+        <span class="c1"># 之所以与False做损失就是为了提高自己的鉴别能力</span>
+        <span class="c1"># 在鉴别方向正确的前提下(即将真实图像判断为True的前提下)，努力将生成器生成的图像判断为假(即Fasle)</span>
+        <span class="n">pred_fake</span> <span class="o">=</span> <span class="n">netD</span><span class="p">(</span><span class="n">fake</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+        <span class="n">loss_D_fake</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterionGAN</span><span class="p">(</span><span class="n">pred_fake</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># Combined loss and calculate gradients</span>
+        <span class="c1"># 两种损失取均值</span>
+        <span class="n">loss_D</span> <span class="o">=</span> <span class="p">(</span><span class="n">loss_D_real</span> <span class="o">+</span> <span class="n">loss_D_fake</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+        <span class="c1"># 反向传播，计算梯度</span>
+        <span class="n">loss_D</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">loss_D</span>
+
+    <span class="k">def</span> <span class="nf">backward_D_A</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate GAN loss for discriminator D_A&quot;&quot;&quot;</span>
+        <span class="c1"># 计算判别器A的损失</span>
+        <span class="n">fake_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fake_B_pool</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fake_B</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_D_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backward_D_basic</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">netD_A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">real_B</span><span class="p">,</span> <span class="n">fake_B</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">backward_D_B</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate GAN loss for discriminator D_B&quot;&quot;&quot;</span>
+        <span class="c1"># 计算判别器B的损失</span>
+        <span class="n">fake_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fake_A_pool</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fake_A</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_D_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backward_D_basic</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">netD_B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">real_A</span><span class="p">,</span> <span class="n">fake_A</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">backward_G</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 生成器的反向传播过程</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the loss for generators G_A and G_B&quot;&quot;&quot;</span>
+        <span class="c1"># 三种损失的权重</span>
+        <span class="n">lambda_idt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">lambda_identity</span>
+        <span class="n">lambda_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">lambda_A</span>
+        <span class="n">lambda_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">lambda_B</span>
+        <span class="c1"># Identity loss</span>
+        <span class="k">if</span> <span class="n">lambda_idt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># G_A should be identity if real_B is fed: ||G_A(B) - B||</span>
+            <span class="c1"># 如果将B传入生成器A中，领域特征不应该发生变化，即图像像素点数据不变</span>
+            <span class="c1"># 换句话说就是生成器A只能生成B领域的数据，如果传入的数据本身属于B领域，则数据不变，即图像特征不发生变化</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">idt_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">netG_A</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real_B</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loss_idt_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterionIdt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idt_A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">real_B</span><span class="p">)</span> <span class="o">*</span> <span class="n">lambda_B</span> <span class="o">*</span> <span class="n">lambda_idt</span>
+            <span class="c1"># G_B should be identity if real_A is fed: ||G_B(A) - A||</span>
+            <span class="c1"># 对于生成器B同理</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">idt_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">netG_B</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real_A</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loss_idt_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterionIdt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idt_B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">real_A</span><span class="p">)</span> <span class="o">*</span> <span class="n">lambda_A</span> <span class="o">*</span> <span class="n">lambda_idt</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loss_idt_A</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loss_idt_B</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># GAN loss D_A(G_A(A))</span>
+        <span class="c1"># 判别器损失对于生成器的优化，这里将生成图的判别结果与True做损失</span>
+        <span class="c1"># 即期望让生成器生成的数据得到判别器的认可</span>
+        <span class="c1"># 这里的True与判别器中的False正好构成对抗关系，即在判别器提高自己判别能力的同时，生成器也在提高自己的生成能力</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_G_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterionGAN</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">netD_A</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fake_B</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># GAN loss D_B(G_B(B))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_G_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterionGAN</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">netD_B</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fake_A</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Forward cycle loss || G_B(G_A(A)) - A||</span>
+        <span class="c1"># 二次生成的图像与真实图像做L1损失</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_cycle_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterionCycle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rec_A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">real_A</span><span class="p">)</span> <span class="o">*</span> <span class="n">lambda_A</span>
+        <span class="c1"># Backward cycle loss || G_A(G_B(B)) - B||</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_cycle_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterionCycle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rec_B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">real_B</span><span class="p">)</span> <span class="o">*</span> <span class="n">lambda_B</span>
+        <span class="c1"># combined loss and calculate gradients</span>
+        <span class="c1"># 将所有损失相加，得到生成器的损失</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_G</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_G_A</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_G_B</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_cycle_A</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_cycle_B</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_idt_A</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_idt_B</span>
+        <span class="c1"># 最后反向传播，计算梯度</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_G</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+
+    <span class="c1"># 通过调用optimize_parameters方法实现参数的更新</span>
+    <span class="k">def</span> <span class="nf">optimize_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate losses, gradients, and update network weights; called in every training iteration&quot;&quot;&quot;</span>
+        <span class="c1"># forward</span>
+        <span class="c1"># 前向传播，将两种数据依次传入两个生成器</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">()</span>  <span class="c1"># compute fake images and reconstruction images.</span>
+        <span class="c1"># G_A and G_B</span>
+        <span class="c1"># 这里将判别器的参数冻住，只更新生成器参数</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_requires_grad</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">netD_A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">netD_B</span><span class="p">],</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># Ds require no gradients when optimizing Gs</span>
+        <span class="c1"># 生成器的优化器梯度清零</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_G</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>  <span class="c1"># set G_A and G_B&#39;s gradients to zero</span>
+        <span class="c1"># 生成器反向传播，计算梯度</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backward_G</span><span class="p">()</span>  <span class="c1"># calculate gradients for G_A and G_B</span>
+        <span class="c1"># 更新生成器参数</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_G</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>  <span class="c1"># update G_A and G_B&#39;s weights</span>
+        <span class="c1"># D_A and D_B</span>
+        <span class="c1"># 将判别器参数解冻</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_requires_grad</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">netD_A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">netD_B</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># 判别器的优化器梯度清零</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_D</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>  <span class="c1"># set D_A and D_B&#39;s gradients to zero</span>
+        <span class="c1"># 判别器A做反向传播，计算梯度</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backward_D_A</span><span class="p">()</span>  <span class="c1"># calculate gradients for D_A</span>
+        <span class="c1"># 判别器B做反向传播，计算梯度</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backward_D_B</span><span class="p">()</span>  <span class="c1"># calculate graidents for D_B</span>
+        <span class="c1"># 优化判别器的参数</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_D</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>  <span class="c1"># update D_A and D_B&#39;s weights</span>
+</code></pre></div>
+<blockquote>
+<p>最后一次修改于：2022年4月20日</p>
+</blockquote>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.cd18aaf1.min.js"></script>
+      
+        <script src="../../mathjax-config.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
+      
+        <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      
+    
+  </body>
+</html>
